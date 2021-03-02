@@ -8,27 +8,37 @@
  * @package    RFD\Core
  */
 
-namespace RFD\Core;
-/**
- * Class Plugin_Dependencies
- */
+namespace RFD\Core\Abstracts;
+
+use RFD\Core\Loader;
+
 abstract class Post_Status {
 
-	protected $loader;
+	protected Loader $loader; //phpcs:ignore Generic.PHP.Syntax.PHPSyntax
 
-	protected $name;
-	protected $label = '';
-	protected $label_count = '';
-	protected $exclude_from_search = false;
-	private $_builtin = false;
-	protected $public = true;
-	protected $internal = true;
-	protected $private = false;
-	protected $protected = false;
-	protected $publicly_queryable = true;
-	protected $show_in_admin_status_list = true;
-	protected $show_in_admin_all_list = true;
-	protected $date_floating = false;
+	protected string $name = '';
+
+	protected string $label = '';
+
+	protected string $label_count = '';
+
+	protected bool $exclude_from_search = false;
+
+	protected bool $public = true;
+
+	protected bool $internal = true;
+
+	protected bool $private = false;
+
+	protected bool $protected = false;
+
+	protected bool $publicly_queryable = true;
+
+	protected bool $show_in_admin_status_list = true;
+
+	protected bool $show_in_admin_all_list = true;
+
+	protected bool $date_floating = false;
 
 	public function __construct( Loader $loader ) {
 		$this->loader = $loader;
@@ -43,11 +53,11 @@ abstract class Post_Status {
 	}
 
 	protected function get_args(): array {
-		return [
+		return array(
 			'label'                     => $this->label,
 			'label_count'               => $this->label_count,
 			'exclude_from_search'       => $this->exclude_from_search,
-			'_builtin'                  => $this->_builtin,
+			'_builtin'                  => false,
 			'public'                    => $this->public,
 			'internal'                  => $this->internal,
 			'protected'                 => $this->protected,
@@ -56,6 +66,6 @@ abstract class Post_Status {
 			'show_in_admin_status_list' => $this->show_in_admin_status_list,
 			'show_in_admin_all_list'    => $this->show_in_admin_all_list,
 			'date_floating'             => $this->date_floating,
-		];
+		);
 	}
 }

@@ -21,11 +21,11 @@ use RFD\Core\Loader;
  */
 class I18n {
 
-	protected $domain = 'rfd-core';
-	protected $deprecated = false;
-	protected $plugin_rel_path = '';
+	protected string $domain = 'rfd-core'; //phpcs:ignore Generic.PHP.Syntax.PHPSyntax
 
-	final public static function init( Loader &$loader, $props = [] ) {
+	protected string $plugin_rel_path = '';
+
+	final public static function init( Loader $loader, $props = array() ) {
 		$i18n = new static();
 		foreach ( $props as $prop_name => $prop_value ) {
 			$i18n->$prop_name = $prop_value;
@@ -38,12 +38,12 @@ class I18n {
 	 *
 	 * @since    0.9.0
 	 */
-	public function load_plugin_textdomain() {
+	public function load_plugin_textdomain(): void {
 
 		if ( true === empty( $this->domain ) || true === empty( $this->deprecated ) || true === empty( $this->plugin_rel_path ) ) {
-			return false;
+			return;
 		}
 
-		load_plugin_textdomain( $this->domain, $this->deprecated, $this->plugin_rel_path );
+		load_plugin_textdomain( $this->domain, '', $this->plugin_rel_path ); //phpcs:ignore WordPress.WP.DeprecatedParameters.Load_plugin_textdomainParam2Found
 	}
 }

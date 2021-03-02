@@ -5,10 +5,11 @@ namespace RFD\Core\Admin;
 use RFD\Core\Loader;
 
 class Menu {
-	protected $menus_pages = [];
-	protected $submenus_pages = [];
 
-	final public static function init( Loader &$loader ) {
+	protected array $menus_pages    = array();
+	protected array $submenus_pages = array();
+
+	final public static function init( Loader $loader ) {
 		$menu = new static();
 		$loader->add_action( 'admin_menu', $menu, 'register' );
 	}
@@ -77,7 +78,7 @@ class Menu {
 
 	private function load_settings_file() {
 		$config_file_path = RFD_CORE_CONFIG_PATH . 'admin/menu.php';
-		$config           = [];
+		$config           = array();
 		// if file does not exist return false
 		if ( true === file_exists( $config_file_path ) ) {
 			$config = include $config_file_path;
@@ -97,27 +98,29 @@ class Menu {
 				continue;
 			}
 
-			array_push( $this->menus_pages, [
-				'page_title' => $menu_page_title,
-				'menu_title' => $menu_menu_title,
-				'capability' => $menu_capability,
-				'menu_slug'  => $menu_slug,
-				'function'   => $menu_callback,
-				'icon_url'   => $menu_icon,
-				'position'   => $menu_position,
-			] );
+			array_push(
+				$this->menus_pages,
+				array(
+					'page_title' => $menu_page_title,
+					'menu_title' => $menu_menu_title,
+					'capability' => $menu_capability,
+					'menu_slug'  => $menu_slug,
+					'function'   => $menu_callback,
+					'icon_url'   => $menu_icon,
+					'position'   => $menu_position,
+				)
+			);
 
-			$submenus = [];
+			$submenus = array();
 			if ( true === isset( $menu_config['submenus'] ) ) {
 				$submenus = $menu_config['submenus'];
 			}
-
 
 			foreach ( $submenus as $submenu_id => $submenu_config ) {
 
 				$submenu_page_title = $submenu_config['page_title'];
 				$submenu_menu_title = $submenu_config['menu_title'];
-				$submenu_capability = apply_filters( 'rfd_submenu_ ' . $submenu_id . '_capabilities', $submenu_config['capability'] );
+				$submenu_capability = apply_filters( 'rfd_submenu_ ' . $submenu_id . '_capabilities', $submenu_config['capability'] ); //phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 				$submenu_callback   = $submenu_config['callback'];
 				$submenu_position   = $submenu_config['position'] ?? null;
 
@@ -131,8 +134,9 @@ class Menu {
 					continue;
 				}
 
-				array_push( $this->submenus_pages,
-					[
+				array_push(
+					$this->submenus_pages,
+					array(
 						'parent_slug' => $menu_slug,
 						'page_title'  => $submenu_page_title,
 						'menu_title'  => $submenu_menu_title,
@@ -140,10 +144,9 @@ class Menu {
 						'capability'  => $submenu_capability,
 						'callback'    => $submenu_callback,
 						'position'    => $submenu_position,
-					]
+					)
 				);
 			}
-
 		}
 	}
 }

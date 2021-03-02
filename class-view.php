@@ -9,9 +9,7 @@
  */
 
 namespace RFD\Core;
-/**
- * Class Plugin_Dependencies
- */
+
 class View {
 	/**
 	 * Get other templates passing attributes and including the file.
@@ -21,7 +19,7 @@ class View {
 	 * @param string $template_path Template path. (default: '').
 	 * @param string $default_path Default path. (default: '').
 	 */
-	public static function render_template( $template_name, $args = [], $template_path = '', $default_path = '' ) {
+	public static function render_template( string $template_name, $args = array(), $template_path = '', $default_path = '' ): void {
 
 		$template = self::locate_template( $template_name, $template_path, $default_path );
 
@@ -44,7 +42,7 @@ class View {
 	 *
 	 * @return string
 	 */
-	public static function get_template_html( $template_name, $args = [], $template_path = '', $default_path = '' ) {
+	public static function get_template_html( string $template_name, $args = array(), $template_path = '', $default_path = '' ): string {
 		ob_start();
 		self::render_template( $template_name, $args, $template_path, $default_path );
 
@@ -66,7 +64,7 @@ class View {
 	 *
 	 * @return string
 	 */
-	public static function locate_template( $template_name, $template_path = '', $default_path = '' ) {
+	public static function locate_template( string $template_name, $template_path = '', $default_path = '' ): string {
 		if ( true === empty( $template_path ) ) {
 			$template_path = basename( plugin_dir_path( dirname( __FILE__ ) ) );
 		}
@@ -76,10 +74,10 @@ class View {
 
 		// Look within passed path within the theme - this is priority.
 		$template = locate_template(
-			[
+			array(
 				trailingslashit( $template_path ) . $template_name,
 				$template_name,
-			]
+			)
 		);
 		// Get default template/.
 		if ( empty( $template ) === true ) {

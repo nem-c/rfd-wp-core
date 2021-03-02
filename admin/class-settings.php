@@ -5,9 +5,10 @@ namespace RFD\Core\Admin;
 use RFD\Core\Input;
 
 class Settings {
-	protected $pages = [];
-	protected $sections = [];
-	protected $fields = [];
+
+	protected array $pages = array();
+	protected array $sections = array();
+	protected array $fields = array();
 
 	public function __construct() {
 		$this->load_settings_file();
@@ -15,13 +16,13 @@ class Settings {
 
 	public function register_menu() {
 		foreach ( $this->pages as $page ) {
-			register_setting( $page["id"], $page["id"] );
+			register_setting( $page['id'], $page['id'] );
 			add_options_page(
-				$page["page_title"],
-				$page["menu_title"],
-				$page["capabilities"],
-				$page["id"],
-				$page["callback"]
+				$page['page_title'],
+				$page['menu_title'],
+				$page['capabilities'],
+				$page['id'],
+				$page['callback']
 			);
 		}
 	}
@@ -34,10 +35,10 @@ class Settings {
 	public function register_sections() {
 		foreach ( $this->sections as $section ) {
 			add_settings_section(
-				$section["id"],
-				$section["title"],
-				$section["callback"],
-				$section["page"]
+				$section['id'],
+				$section['title'],
+				$section['callback'],
+				$section['page']
 			);
 		}
 	}
@@ -45,74 +46,84 @@ class Settings {
 	public function register_fields() {
 		foreach ( $this->fields as $field ) {
 			add_settings_field(
-				$field["id"],
-				$field["title"],
-				$field["callback"],
-				$field["page"],
-				$field["section"],
-				$field["args"]
+				$field['id'],
+				$field['title'],
+				$field['callback'],
+				$field['page'],
+				$field['section'],
+				$field['args']
 			);
 		}
 	}
 
 	private function load_settings_file() {
-		$config_file_path = plugin_dir_path( dirname( __FILE__, 2 ) ) . "/config/admin/settings.php";
-		$config           = [];
+		$config_file_path = RFD_CORE_CONFIG_PATH . 'admin/settings.php';
+		$config           = array();
 		if ( true === file_exists( $config_file_path ) ) {
 			$config = include $config_file_path;
 		}
 
-
 		foreach ( $config as $page_block ) {
-			$page           = $page_block["id"];
+			$page           = $page_block['id'];
 			$page_options   = get_option( $page );
-			$capabilities   = apply_filters( "dom_settings_{$page}_capabilities", "manage_options" );
-			$sections_block = $page_block["sections"];
+			$capabilities   = apply_filters( 'rfd_settings_' . $page . '_capabilities', 'manage_options' );
+			$sections_block = $page_block['sections'];
 
-			array_push( $this->pages, [
-				"id"           => $page,
-				"page_title"   => $page_block["page_title"],
-				"menu_title"   => $page_block["menu_title"],
-				"capabilities" => $capabilities,
-				"callback"     => $page_block["callback"],
-			] );
+			array_push(
+				$this->pages,
+				array(
+					'id'           => $page,
+					'page_title'   => $page_block['page_title'],
+					'menu_title'   => $page_block['menu_title'],
+					'capabilities' => $capabilities,
+					'callback'     => $page_block['callback'],
+				)
+			);
 
 			foreach ( $sections_block as $section_block ) {
 				if ( false === isset( $section_block['id'] ) ) {
 					continue;
 				}
-				$section      = $section_block["id"];
-				$fields_block = $section_block["fields"];
+				$section      = $section_block['id'];
+				$fields_block = $section_block['fields'];
 
-				array_push( $this->sections, [
-					"id"       => $section,
-					"title"    => $section_block["title"],
-					"callback" => $section_block["callback"],
-					"page"     => $page,
-				] );
+				array_push(
+					$this->sections,
+					array(
+						'id'       => $section,
+						'title'    => $section_block['title'],
+						'callback' => $section_block['callback'],
+						'page'     => $page,
+					)
+				);
 
 				foreach ( $fields_block as $field_block ) {
-					$field = $field_block["id"];
-					array_push( $this->fields, [
-						"id"       => $field,
-						"title"    => $field_block["title"],
-						"callback" => function ( $args ) use ( $page, $page_options, $field, $field_block ) {
-							echo Input::render( [
-								"id"          => $field,
-								"field_name"  => $page . '[' . $field . ']',
-								"field_value" => $page_options[ $field ] ?? null,
-								"type"        => $field_block["type"],
-								"title"       => $field_block["title"],
-								"args"        => $field_block["args"],
-							] );
-						},
-						"page"     => $page,
-						"section"  => $section,
-						"args"     => [
-							"label_for" => $field_block["label_for"],
-							"class"     => "dom_astology_$field",
-						],
-					] );
+					$field = $field_block['id'];
+					array_push(
+						$this->fields,
+						array(
+							'id'       => $field,
+							'title'    => $field_block['title'],
+							'callback' => function ( $args ) use ( $page, $page_options, $field, $field_block ) {
+								echo Input::render( //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									array(
+										'id'          => $field,
+										'field_name'  => $page . '[' . $field . ']',
+										'field_value' => $page_options[ $field ] ?? null,
+										'type'        => $field_block['type'],
+										'title'       => $field_block['title'],
+										'args'        => $field_block['args'],
+									)
+								);
+							},
+							'page'     => $page,
+							'section'  => $section,
+							'args'     => array(
+								'label_for' => $field_block['label_for'],
+								'class'     => 'rfd_input_' . $field,
+							),
+						)
+					);
 				}
 			}
 		}

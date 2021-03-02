@@ -16,9 +16,9 @@ use RFD\Core\Loader;
 use RFD\Core\View;
 
 class Micromodal {
-	protected $loader;
+	protected Loader $loader;
 
-	public function __construct( Loader &$loader ) {
+	public function __construct( Loader $loader ) {
 		$this->loader = $loader;
 	}
 
@@ -32,22 +32,26 @@ class Micromodal {
 	 * Show modal content in footer
 	 */
 	public function modal_content(): void {
-		View::render_template( 'micromodal/modal.php', [], null, RFD_CORE_VIEW_PATH );
+		View::render_template( 'micromodal/modal.php', array(), null, RFD_CORE_VIEW_PATH );
 	}
 
 	public function register_assets() {
-		wp_register_script( 'micromodal', RFD_CORE_ASSETS_URL . 'micromodal/micromodal.js', [], '0.4.6', true );
-		wp_register_style( 'micromodal-css', RFD_CORE_ASSETS_URL . '/micromodal/micromodal.css', [], '0.4.6' );
+		wp_register_script( 'micromodal', RFD_CORE_ASSETS_URL . 'micromodal/micromodal.js', array(), '0.4.6', true );
+		wp_register_style( 'micromodal-css', RFD_CORE_ASSETS_URL . '/micromodal/micromodal.css', array(), '0.4.6' );
 
 	}
 
 	public function enqueue_assets() {
-		$blocks = apply_filters( 'rfd_ext_micromodal_allowed_blocks', [
-			'gallery',
-			'image',
-			'rfd-live-auctions/auction-gallery',
-		] );
+		$blocks = apply_filters(
+			'rfd_ext_micromodal_allowed_blocks',
+			array(
+				'gallery',
+				'image',
+				'rfd-live-auctions/auction-gallery',
+			)
+		);
 
+		//TODO: $has_block_on_page has no effect at this moment
 		$has_block_on_page = false;
 		foreach ( $blocks as $block ) {
 			if ( true === has_block( $block ) ) {

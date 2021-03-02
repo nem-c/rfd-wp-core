@@ -12,24 +12,24 @@
 namespace RFD\Core;
 
 class Input {
-	protected static $options = [];
+	protected static $options = array();
 
-	public static function render( $args, $options = [] ) {
-		$defaults = [
+	public static function render( $args, $options = array() ): string {
+		$defaults = array(
 			'id'          => '',
 			'field_name'  => '',
 			'field_value' => '',
 			'type'        => '',
 			'title'       => '',
 			'description' => '',
-			'options'     => [],
-			'editor'      => [
+			'options'     => array(),
+			'editor'      => array(
 				'visual'        => true,
 				'teeny'         => true,
 				'textarea_rows' => 4,
-			],
-			'atts'        => [],
-		];
+			),
+			'atts'        => array(),
+		);
 
 		$configs = array_replace_recursive( $defaults, $args );
 		extract( $configs, EXTR_OVERWRITE );
@@ -45,7 +45,19 @@ class Input {
 		 * @var $atts
 		 */
 
-		if ( ( $type == 'select' || $type == 'cats' || $type == 'categories' ) && ! empty( $atts ) && array_key_exists( 'multiple', $atts ) ) {
+		if (
+			true === in_array(
+				$type,
+				array(
+					'select',
+					'cats',
+					'categories',
+				),
+				true
+			)
+			&& false === empty( $atts )
+			&& true === array_key_exists( 'multiple', $atts )
+		) {
 			$multiple = true;
 		} else {
 			$multiple = false;
@@ -136,15 +148,15 @@ class Input {
 				$input = "<input name=\"" . $field_name . "\" id=\"" . $id . "\" type=\"text\" value=\"" . $value . "\"" . $attributes . " />";
 				break;
 			default:
-			case "email":
-			case "text":
-				$input = "<input name=\"" . $field_name . "\" id=\"" . $id . "\" type=\"" . $type . "\" value=\"" . $value . "\"" . $attributes . " />";
+			case 'email':
+			case 'text':
+				$input = '<input name="' . $field_name . '" id="' . $id . '" type="' . $type . '" value="' . $value . '"' . $attributes . ' />';
 				break;
 		}
-		$html = "";
+		$html = '';
 		$html .= $input;
 		if ( ! empty( $description ) ) {
-			$html .= "<p class=\"description\">" . $description . "</p>";
+			$html .= '<p class="description">' . $description . '</p>';
 		}
 
 		return $html;
@@ -152,20 +164,20 @@ class Input {
 
 	private static function get_image_sizes( $size = '' ) {
 		global $_wp_additional_image_sizes;
-		$sizes                        = [];
-		$get_intermediate_image_sizes = get_intermediate_image_sizes();
+		$sizes = array();
+
 		// Create the full array with sizes and crop info
-		foreach ( $get_intermediate_image_sizes as $_size ) {
-			if ( in_array( $_size, [ 'thumbnail', 'medium', 'large' ] ) ) {
+		foreach ( get_intermediate_image_sizes() as $_size ) {
+			if ( in_array( $_size, array( 'thumbnail', 'medium', 'large' ), true ) ) {
 				$sizes[ $_size ]['width']  = get_option( $_size . '_size_w' );
 				$sizes[ $_size ]['height'] = get_option( $_size . '_size_h' );
 				$sizes[ $_size ]['crop']   = (bool) get_option( $_size . '_crop' );
 			} elseif ( isset( $_wp_additional_image_sizes[ $_size ] ) ) {
-				$sizes[ $_size ] = [
+				$sizes[ $_size ] = array(
 					'width'  => $_wp_additional_image_sizes[ $_size ]['width'],
 					'height' => $_wp_additional_image_sizes[ $_size ]['height'],
 					'crop'   => $_wp_additional_image_sizes[ $_size ]['crop'],
-				];
+				);
 			}
 		}
 

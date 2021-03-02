@@ -13,33 +13,33 @@ namespace RFD\Core;
 
 abstract class Block {
 
-	protected $build_config = null;
-	protected $name = null;
+	protected ?string $build_config = null;
+	protected ?string $name = null;
 
-	protected $editor_handle = null;
+	protected ?string $editor_handle = null;
 
-	protected $editor_script_src = null;
-	protected $editor_script_path = null;
-	protected $editor_script_dependencies = [
+	protected ?string $editor_script_src = null;
+	protected ?string $editor_script_path = null;
+	protected array $editor_script_dependencies = array(
 		'wp-blocks',
 		'wp-element',
 		'wp-i18n',
 		'wp-polyfill',
 		'wp-editor',
-	];
+	);
 
-	protected $editor_style_src = null;
-	protected $editor_style_path = null;
-	protected $editor_style_dependencies = [
+	protected ?string $editor_style_src = null;
+	protected ?string $editor_style_path = null;
+	protected array $editor_style_dependencies = array(
 		'wp-edit-blocks',
-	];
+	);
 
-	protected $frontend_style_handle = null;
-	protected $frontend_style_src = null;
-	protected $frontend_style_path = null;
-	protected $frontend_style_dependencies = [];
+	protected ?string $frontend_style_handle = null;
+	protected ?string $frontend_style_src = null;
+	protected ?string $frontend_style_path = null;
+	protected array $frontend_style_dependencies = array();
 
-	protected $lang_domain = 'wordpress';
+	protected string $lang_domain = 'WordPress';
 
 	public function register() {
 
@@ -49,14 +49,14 @@ abstract class Block {
 		if ( true === file_exists( $this->build_config ) ) {
 			register_block_type_from_metadata(
 				$this->build_config,
-				[
-					'render_callback' => [ $this, 'render_block' ],
-				]
+				array(
+					'render_callback' => array( $this, 'render_block' ),
+				)
 			);
 		} else {
-			$block_args = [
+			$block_args = array(
 				'editor_script' => $this->editor_handle,
-			];
+			);
 			if ( false === empty( $this->editor_style_path ) ) {
 				$block_args['editor_style'] = $this->editor_handle;
 			}
@@ -66,8 +66,6 @@ abstract class Block {
 
 			register_block_type( $this->name, $block_args );
 		}
-
-
 	}
 
 	public function register_editor() {
@@ -75,7 +73,8 @@ abstract class Block {
 			$this->editor_handle,
 			$this->editor_script_src,
 			$this->editor_script_dependencies,
-			filemtime( $this->editor_script_path )
+			filemtime( $this->editor_script_path ),
+			true
 		);
 		wp_set_script_translations( $this->editor_handle, $this->lang_domain );
 

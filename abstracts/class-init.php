@@ -27,7 +27,7 @@ abstract class Init {
 	 * @access   protected
 	 * @var      Loader $loader Maintains and registers all hooks for the plugin.
 	 */
-	protected $loader;
+	protected Loader $loader; //phpcs:ignore Generic.PHP.Syntax.PHPSyntax
 	/**
 	 * The unique identifier of this plugin.
 	 *
@@ -35,7 +35,7 @@ abstract class Init {
 	 * @access   protected
 	 * @var      string $plugin_name The string used to uniquely identify this plugin.
 	 */
-	protected $plugin_name;
+	protected string $plugin_name;
 	/**
 	 * The current version of the plugin.
 	 *
@@ -43,13 +43,13 @@ abstract class Init {
 	 * @access   protected
 	 * @var      string $version The current version of the plugin.
 	 */
-	protected $version;
+	protected string $version;
 
-	protected $taxonomies = [];
+	protected array $taxonomies = array();
 
-	protected $post_types = [];
+	protected array $post_types = array();
 
-	protected $meta_boxes = [];
+	protected array $meta_boxes = array();
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -163,7 +163,7 @@ abstract class Init {
 	 * @access protected
 	 */
 	protected function schedule_jobs(): void {
-		$jobs = [];
+		$jobs = array();
 
 		foreach ( $jobs as $job ) {
 			$this->loader->add_action( 'init', $job, 'schedule' );
@@ -173,6 +173,8 @@ abstract class Init {
 
 	/**
 	 * Add Custom Post Type Class
+	 *
+	 * @param string $post_type_class
 	 *
 	 * @return Init
 	 * @since 2.0.0
@@ -187,6 +189,8 @@ abstract class Init {
 	/**
 	 * Add Custom Taxonomy Class
 	 *
+	 * @param string $taxonomy_class
+	 *
 	 * @return Init
 	 * @since 2.0.0
 	 * @access protected
@@ -199,6 +203,8 @@ abstract class Init {
 
 	/**
 	 * Add Meta Box Class
+	 *
+	 * @param string $meta_box_class
 	 *
 	 * @return Init
 	 * @since 2.0.0

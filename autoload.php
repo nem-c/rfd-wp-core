@@ -10,7 +10,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-include_once 'constants.php';
+require_once 'constants.php';
 
 spl_autoload_register(
 	function ( $filename ) {

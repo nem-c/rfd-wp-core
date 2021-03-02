@@ -9,29 +9,25 @@
  */
 
 namespace RFD\Core\Network;
-/**
- * Class Plugin_Dependencies
- */
 
 use RFD\Core\Loader;
-use RFD\Core\Logger;
 
 abstract class Site_Tab {
 
-	protected $loader;
-	protected $blog_id;
+	protected Loader $loader;
+	protected int $blog_id;
 
-	protected $save_action = '';
-	protected $nonce_action = 'save';
-	protected $nonce_name = '';
+	protected string $save_action = '';
+	protected string $nonce_action = 'save';
+	protected string $nonce_name = '';
 
-	protected $tab_name;
-	protected $tab_label;
-	protected $tab_url;
-	protected $tab_cap = 'manage_sites';
-	protected $tab_menu_slug;
+	protected string $tab_name;
+	protected string $tab_label;
+	protected string $tab_url;
+	protected string $tab_cap = 'manage_sites';
+	protected string $tab_menu_slug;
 
-	public function __construct( Loader &$loader ) {
+	public function __construct( Loader $loader ) {
 		$this->loader = $loader;
 	}
 
@@ -45,11 +41,11 @@ abstract class Site_Tab {
 	}
 
 	public function add_tabs( $tabs ) {
-		$tabs[ $this->tab_name ] = [
+		$tabs[ $this->tab_name ] = array(
 			'label' => $this->tab_label,
 			'url'   => $this->tab_url,
 			'cap'   => $this->tab_cap,
-		];
+		);
 
 		return $tabs;
 	}
@@ -61,14 +57,14 @@ abstract class Site_Tab {
 			'',
 			$this->tab_cap,
 			$this->tab_menu_slug,
-			[
+			array(
 				$this,
 				'page_handler',
-			]
+			)
 		);
 	}
 
-	public function nonce_field() {
+	public function nonce_field(): string {
 		return wp_nonce_field( $this->nonce_action, $this->nonce_name, true, false );
 	}
 
@@ -77,18 +73,18 @@ abstract class Site_Tab {
 	}
 
 	protected function get_blog_id() {
-		if ( true === isset( $_POST['blog_id'] ) ) {
-			$this->blog_id = intval( $_POST['blog_id'] );
-		} elseif ( true === isset( $_GET['id'] ) ) {
-			$this->blog_id = intval( $_GET['id'] );
+		if ( true === isset( $_POST['blog_id'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$this->blog_id = intval( $_POST['blog_id'] ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
+		} elseif ( true === isset( $_GET['id'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$this->blog_id = intval( $_GET['id'] ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		if ( $this->blog_id <= 0 ) {
-			wp_die( __( 'Sorry, this feature is not available from menu' ) );
+			wp_die( esc_attr__( 'Sorry, this feature is not available from menu' ) );
 		}
 	}
 
-	abstract function page_handler();
+	abstract public function page_handler();
 
-	abstract function form_handler();
+	abstract public function form_handler();
 }
