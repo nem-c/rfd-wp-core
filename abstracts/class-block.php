@@ -8,7 +8,7 @@
  * @package RFD\Core
  */
 
-namespace RFD\Core;
+namespace RFD\Core\Abstracts;
 
 /**
  * Class Block

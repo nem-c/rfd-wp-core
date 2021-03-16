@@ -1,14 +1,44 @@
 <?php
+/**
+ * Settings page generator.
+ *
+ * @link       https://rfd.rs/
+ * @since      0.9.0
+ *
+ * @package    RFD\Core
+ */
 
 namespace RFD\Core\Admin;
 
 use RFD\Core\Input;
 
+/**
+ * Class Settings
+ *
+ * @package RFD\Core\Admin
+ */
 class Settings {
 
-	protected array $pages = array();
-	protected array $sections = array();
-	protected array $fields = array();
+	/**
+	 * Settings pages.
+	 *
+	 * @var array
+	 */
+	protected $pages = array();
+
+	/**
+	 * Settings sections.
+	 *
+	 * @var array
+	 */
+	protected $sections = array();
+
+	/**
+	 * Settings fields.
+	 *
+	 * @var array
+	 */
+	protected $fields = array();
 
 	public function __construct() {
 		$this->load_settings_file();

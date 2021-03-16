@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Simple scheduler class
  *
@@ -13,26 +12,40 @@ namespace RFD\Core\Abstracts;
 
 use RFD\Core\Loader;
 
+/**
+ * Class Scheduler
+ *
+ * @package RFD\Core\Abstracts
+ */
 abstract class Scheduler {
-	/**
-	 * @var Loader Loader Instance
-	 */
-	protected Loader $loader; //phpcs:ignore Generic.PHP.Syntax.PHPSyntax
 
 	/**
-	 * @var string $schedule_name scheduled name (used later as hook name for scheduling
+	 * Loader Instance
+	 *
+	 * @var Loader
 	 */
-	protected string $schedule_name;
+	protected $loader;
 
 	/**
-	 * @var string $recurrence how often process should be executed. Defaults to 'hourly’, ‘daily’, or ‘twicedaily’.
+	 * Scheduled name (used later as hook name for scheduling)
+	 *
+	 * @var string $schedule_name
 	 */
-	protected string $recurrence = 'daily';
+	protected $schedule_name;
+
+	/**
+	 * How often process should be executed.
+	 * Accepts 'hourly’, ‘daily’, or ‘twicedaily’. Default 'daily'.
+	 * If custom recurrence is defined it can be used here.
+	 *
+	 * @var string $recurrence
+	 */
+	protected $recurrence = 'daily';
 
 	/**
 	 * Scheduler constructor.
 	 *
-	 * @param Loader $loader
+	 * @param Loader $loader Loader object.
 	 */
 	public function __construct( Loader $loader ) {
 		$this->loader = &$loader;
@@ -49,13 +62,26 @@ abstract class Scheduler {
 		}
 	}
 
+	/**
+	 * Run when deactivated.
+	 */
 	public function deactivate() {
 		wp_clear_scheduled_hook( $this->schedule_name );
 	}
 
+	/**
+	 * Get schedule name
+	 *
+	 * @return string
+	 */
 	public function get_schedule_name(): string {
 		return $this->schedule_name;
 	}
 
+	/**
+	 * Command to execute.
+	 *
+	 * @return mixed
+	 */
 	abstract public function execute();
 }

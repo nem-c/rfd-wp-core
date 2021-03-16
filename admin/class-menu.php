@@ -1,25 +1,60 @@
 <?php
+/**
+ * Admin menu updater.
+ *
+ * @link       https://rfd.rs/
+ * @since      0.9.0
+ *
+ * @package    RFD\Core
+ */
 
 namespace RFD\Core\Admin;
 
 use RFD\Core\Loader;
 
+/**
+ * Class Menu
+ *
+ * @package RFD\Core\Admin
+ */
 class Menu {
 
-	protected array $menus_pages    = array();
-	protected array $submenus_pages = array();
+	/**
+	 * Registered top menus.
+	 *
+	 * @var array
+	 */
+	protected $menus_pages = array();
 
+	/**
+	 * Registered submenus.
+	 *
+	 * @var array
+	 */
+	protected $submenus_pages = array();
+
+	/**
+	 * Static init for easy access to library.
+	 *
+	 * @param Loader $loader Loader object.
+	 */
 	final public static function init( Loader $loader ) {
 		$menu = new static();
 		$loader->add_action( 'admin_menu', $menu, 'register' );
 	}
 
+	/**
+	 * Register menus.
+	 */
 	public function register() {
 		$this->load_settings_file();
 		$this->register_menus();
 		$this->register_submenus();
 	}
 
+	/**
+	 * Register top admin menu pages.
+	 */
 	protected function register_menus() {
 		foreach ( $this->menus_pages as $menu_page ) {
 
@@ -27,13 +62,9 @@ class Menu {
 			$menu_title    = $menu_page['menu_title'];
 			$compatibility = $menu_page['capability'];
 			$menu_slug     = $menu_page['menu_slug'];
-			if ( true === isset( $menu_page['callback'] ) ) {
-				$callback = $menu_page['callback'];
-			} else {
-				$callback = false;
-			}
-			$icon_url = $menu_page['icon_url'];
-			$position = $menu_page['position'];
+			$callback      = $this->fetch_callback( $menu_page );
+			$icon_url      = $menu_page['icon_url'];
+			$position      = $menu_page['position'];
 
 			add_menu_page(
 				$page_title,
@@ -49,6 +80,9 @@ class Menu {
 		}
 	}
 
+	/**
+	 * Register submenu items
+	 */
 	protected function register_submenus() {
 		foreach ( $this->submenus_pages as $submenu_page ) {
 
@@ -57,12 +91,8 @@ class Menu {
 			$menu_title  = $submenu_page['menu_title'];
 			$capability  = $submenu_page['capability'];
 			$menu_slug   = $submenu_page['menu_slug'];
-			if ( true === isset( $submenu_page['callback'] ) ) {
-				$callback = $submenu_page['callback'];
-			} else {
-				$callback = false;
-			}
-			$position = $submenu_page['position'] ?? null;
+			$callback    = $this->fetch_callback( $submenu_page );
+			$position    = $submenu_page['position'] ?? null;
 
 			add_submenu_page(
 				$parent_slug,
@@ -76,10 +106,30 @@ class Menu {
 		}
 	}
 
+	/**
+	 * Fetch callback from config array.
+	 *
+	 * @param array $menu_config Menu config array.
+	 *
+	 * @return array|string|bool
+	 */
+	private function fetch_callback( array $menu_config ) {
+		if ( true === isset( $menu_config['callback'] ) ) {
+			$callback = $menu_config['callback'];
+		} else {
+			$callback = false;
+		}
+
+		return $callback;
+	}
+
+	/**
+	 * Load pages from config file.
+	 */
 	private function load_settings_file() {
 		$config_file_path = RFD_CORE_CONFIG_PATH . 'admin/menu.php';
 		$config           = array();
-		// if file does not exist return false
+		// if file does not exist return false.
 		if ( true === file_exists( $config_file_path ) ) {
 			$config = include $config_file_path;
 		}

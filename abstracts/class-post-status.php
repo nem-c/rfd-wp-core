@@ -12,46 +12,127 @@ namespace RFD\Core\Abstracts;
 
 use RFD\Core\Loader;
 
+/**
+ * Class Post_Status
+ *
+ * @package RFD\Core\Abstracts
+ */
 abstract class Post_Status {
 
-	protected Loader $loader; //phpcs:ignore Generic.PHP.Syntax.PHPSyntax
+	/**
+	 * Loader object.
+	 *
+	 * @var Loader
+	 */
+	protected $loader;
 
-	protected string $name = '';
+	/**
+	 * Post status name.
+	 *
+	 * @var string
+	 */
+	protected $name = '';
 
-	protected string $label = '';
+	/**
+	 * Post status label.
+	 *
+	 * @var string
+	 */
+	protected $label = '';
 
-	protected string $label_count = '';
+	/**
+	 * Post status label count.
+	 *
+	 * @var string
+	 */
+	protected $label_count = '';
 
-	protected bool $exclude_from_search = false;
+	/**
+	 * Exclude post status from search.
+	 *
+	 * @var bool
+	 */
+	protected $exclude_from_search = false;
 
-	protected bool $public = true;
+	/**
+	 * Post status is public.
+	 *
+	 * @var bool
+	 */
+	protected $public = true;
 
-	protected bool $internal = true;
+	/**
+	 * Post status is internal only.
+	 *
+	 * @var bool
+	 */
+	protected $internal = false;
 
-	protected bool $private = false;
+	/**
+	 * Post status is private.
+	 *
+	 * @var bool
+	 */
+	protected $private = false;
 
-	protected bool $protected = false;
+	/**
+	 * Post status is protected.
+	 *
+	 * @var bool
+	 */
+	protected $protected = false;
 
-	protected bool $publicly_queryable = true;
+	/**
+	 * Post status can be queried publicly.
+	 *
+	 * @var bool
+	 */
+	protected $publicly_queryable = true;
 
-	protected bool $show_in_admin_status_list = true;
+	/**
+	 * Show post status in admin list.
+	 *
+	 * @var bool
+	 */
+	protected $show_in_admin_status_list = true;
 
-	protected bool $show_in_admin_all_list = true;
+	/**
+	 * Show post status in admin filters.
+	 *
+	 * @var bool
+	 */
+	protected $show_in_admin_all_list = true;
 
-	protected bool $date_floating = false;
+	/**
+	 * Post status is date floating.
+	 *
+	 * @var bool
+	 */
+	protected $date_floating = false;
 
-	public function __construct( Loader $loader ) {
-		$this->loader = $loader;
+	/**
+	 * Init post status
+	 *
+	 * @param Loader $loader Loader object.
+	 */
+	final public static function init( Loader $loader ) {
+		$post_status = new static();
+
+		$loader->add_action( 'init', $post_status, 'register' );
 	}
 
-	public function init() {
-		$this->loader->add_action( 'init', $this, 'register' );
-	}
-
+	/**
+	 * Register post status
+	 */
 	public function register() {
 		register_post_status( $this->name, $this->get_args() );
 	}
 
+	/**
+	 * Generate arguments array from class attributes.
+	 *
+	 * @return array
+	 */
 	protected function get_args(): array {
 		return array(
 			'label'                     => $this->label,

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Enqueue library
  *
@@ -11,18 +10,38 @@
 
 namespace RFD\Core;
 
+/**
+ * Class Enqueue
+ *
+ * @package RFD\Core
+ */
 class Enqueue {
 
-	protected array $admin_assets = array(
+	/**
+	 * Registered admin assets
+	 *
+	 * @var array[] $admin_assets
+	 */
+	protected $admin_assets = array(
 		'css' => array(),
 		'js'  => array(),
 	);
 
-	protected array $frontend_assets = array(
+	/**
+	 * Registered frontend assets
+	 *
+	 * @var array[] $frontend_assets
+	 */
+	protected $frontend_assets = array(
 		'css' => array(),
 		'js'  => array(),
 	);
 
+	/**
+	 * Static init for easy access to library
+	 *
+	 * @param Loader $loader Loader object.
+	 */
 	final public static function init( Loader $loader ) {
 		$enqueue = new static();
 		if ( true === is_admin() ) {
@@ -33,52 +52,92 @@ class Enqueue {
 		$loader->add_action( 'wp_enqueue_scripts', $enqueue, 'enqueue_frontend_assets' );
 	}
 
-	public function enqueue_admin_assets( $hook ) {
-		$this->enqueue_assets( $this->admin_assets, $hook );
+	/**
+	 * Enqueue admin assets
+	 */
+	public function enqueue_admin_assets() {
+		$this->enqueue_assets( $this->admin_assets );
 	}
 
-	public function enqueue_frontend_assets( $hook ) {
-		$this->enqueue_assets( $this->frontend_assets, $hook );
+	/**
+	 * Enqueue frontend assets
+	 */
+	public function enqueue_frontend_assets() {
+		$this->enqueue_assets( $this->frontend_assets );
 	}
 
-	public function enqueue_assets( $assets, $hook ) {
+	/**
+	 * Enqueue assets
+	 *
+	 * @param array $assets Assets array.
+	 */
+	public function enqueue_assets( array $assets ) {
 		foreach ( $assets['js'] as $js_asset ) {
-			if ( false === is_array( $js_asset ) ) {
-				$handle = $js_asset;
-				wp_enqueue_script( $handle );
-			} else {
-				wp_enqueue_script(
-					$js_asset['handle'],
-					$js_asset['src'],
-					$js_asset['deps'],
-					$js_asset['ver'],
-					$js_asset['in_footer']
-				);
-			}
+			$this->enqueue_script( $js_asset );
 		}
 
 		foreach ( $assets['css'] as $css_asset ) {
-			wp_enqueue_style(
-				$css_asset['handle'],
-				$css_asset['src'],
-				$css_asset['deps'],
-				$css_asset['ver']
+			$this->enqueue_style( $css_asset );
+		}
+	}
+
+	/**
+	 * Enqueue scripts
+	 *
+	 * @param string|array $asset Script config array.
+	 */
+	protected function enqueue_script( $asset ) {
+		if ( false === is_array( $asset ) ) {
+			wp_enqueue_script( $asset );
+		} else {
+			wp_enqueue_script(
+				$asset['handle'],
+				$asset['src'],
+				$asset['deps'],
+				$asset['ver'],
+				$asset['in_footer']
 			);
 		}
 	}
 
+	/**
+	 * Enqueue style
+	 *
+	 * @param array $asset Script config array.
+	 */
+	protected function enqueue_style( array $asset ) {
+		wp_enqueue_style(
+			$asset['handle'],
+			$asset['src'],
+			$asset['deps'],
+			$asset['ver']
+		);
+	}
+
+	/**
+	 * Load frontend configuration file
+	 */
 	protected function load_frontend_configuration() {
 		$config_file_path = RFD_CORE_CONFIG_PATH . 'enqueue.php';
 		$config_array     = $this->load_config_file( $config_file_path );
 		$this->store_configuration( $config_array );
 	}
 
+	/**
+	 * Load admin configuration file
+	 */
 	protected function load_admin_configuration() {
 		$config_file_path = RFD_CORE_CONFIG_PATH . 'admin/enqueue.php';
 		$config_array     = $this->load_config_file( $config_file_path );
 		$this->store_configuration( $config_array, 'admin' );
 	}
 
+	/**
+	 * Save configuration to class attributes
+	 *
+	 * @param array $config_array Configuration array for assets.
+	 * @param string $type Configuration type (frontend or admin).
+	 */
 	protected function store_configuration( array $config_array, string $type = 'frontend' ) {
 		$type_attribute = $type . '_assets';
 
@@ -117,6 +176,13 @@ class Enqueue {
 		}
 	}
 
+	/**
+	 * Load config file if exists
+	 *
+	 * @param string $config_file_path Path to config file.
+	 *
+	 * @return array
+	 */
 	protected function load_config_file( string $config_file_path ): array {
 		$config_array = array();
 

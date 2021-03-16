@@ -18,6 +18,11 @@ use RFD\Core\Admin\Menu;
 use RFD\Core\Enqueue;
 use RFD\Core\Loader;
 
+/**
+ * Class Init
+ *
+ * @package RFD\Core\Abstracts
+ */
 abstract class Init {
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -27,7 +32,8 @@ abstract class Init {
 	 * @access   protected
 	 * @var      Loader $loader Maintains and registers all hooks for the plugin.
 	 */
-	protected Loader $loader; //phpcs:ignore Generic.PHP.Syntax.PHPSyntax
+	protected $loader;
+
 	/**
 	 * The unique identifier of this plugin.
 	 *
@@ -35,7 +41,8 @@ abstract class Init {
 	 * @access   protected
 	 * @var      string $plugin_name The string used to uniquely identify this plugin.
 	 */
-	protected string $plugin_name;
+	protected $plugin_name;
+
 	/**
 	 * The current version of the plugin.
 	 *
@@ -43,13 +50,28 @@ abstract class Init {
 	 * @access   protected
 	 * @var      string $version The current version of the plugin.
 	 */
-	protected string $version;
+	protected $version;
 
-	protected array $taxonomies = array();
+	/**
+	 * Taxonomies to be registered.
+	 *
+	 * @var array
+	 */
+	protected $taxonomies = array();
 
-	protected array $post_types = array();
+	/**
+	 * Post types to be registered.
+	 *
+	 * @var array
+	 */
+	protected $post_types = array();
 
-	protected array $meta_boxes = array();
+	/**
+	 * Meta boxes to be registered.
+	 *
+	 * @var array
+	 */
+	protected $meta_boxes = array();
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -83,19 +105,23 @@ abstract class Init {
 		return $this;
 	}
 
-	protected function prepare_general(): self {
-		return $this;
+	/**
+	 * Used to register general hooks for both admin and frontend
+	 */
+	protected function prepare_general(): void {
+
 	}
 
 	/**
 	 * Admin-only hooks
 	 */
-	protected function prepare_admin(): self {
-		return $this;
+	protected function prepare_admin(): void {
 	}
 
-	protected function prepare_frontend(): self {
-		return $this;
+	/**
+	 * Frontend hooks only
+	 */
+	protected function prepare_frontend(): void {
 	}
 
 	/**
@@ -174,7 +200,7 @@ abstract class Init {
 	/**
 	 * Add Custom Post Type Class
 	 *
-	 * @param string $post_type_class
+	 * @param string $post_type_class Post_Type class path.
 	 *
 	 * @return Init
 	 * @since 2.0.0
@@ -189,7 +215,7 @@ abstract class Init {
 	/**
 	 * Add Custom Taxonomy Class
 	 *
-	 * @param string $taxonomy_class
+	 * @param string $taxonomy_class Taxonomy class path.
 	 *
 	 * @return Init
 	 * @since 2.0.0
@@ -204,7 +230,7 @@ abstract class Init {
 	/**
 	 * Add Meta Box Class
 	 *
-	 * @param string $meta_box_class
+	 * @param string $meta_box_class Meta_Box class path.
 	 *
 	 * @return Init
 	 * @since 2.0.0

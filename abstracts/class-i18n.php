@@ -21,10 +21,26 @@ use RFD\Core\Loader;
  */
 class I18n {
 
-	protected string $domain = 'rfd-core'; //phpcs:ignore Generic.PHP.Syntax.PHPSyntax
+	/**
+	 * Domain lang to be used
+	 *
+	 * @var string
+	 */
+	protected $domain = 'rfd-core';
 
-	protected string $plugin_rel_path = '';
+	/**
+	 * Plugin path to language files.
+	 *
+	 * @var string
+	 */
+	protected $plugin_rel_path = '';
 
+	/**
+	 * Static init for easy access to library
+	 *
+	 * @param Loader $loader Loader object.
+	 * @param array $props custom properties to be used.
+	 */
 	final public static function init( Loader $loader, $props = array() ) {
 		$i18n = new static();
 		foreach ( $props as $prop_name => $prop_value ) {
