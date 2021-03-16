@@ -1,4 +1,13 @@
 <?php
+/**
+ * Constants file
+ *
+ * @link       https://rfd.rs/
+ * @since      0.9.0
+ *
+ * @package    RFD\Core
+ * @subpackage RFD\Core\Views
+ */
 
 if ( false === defined( 'RFD_CORE_VIEW_PATH' ) ) {
 	define( 'RFD_CORE_VIEW_PATH', dirname( __FILE__ ) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR );

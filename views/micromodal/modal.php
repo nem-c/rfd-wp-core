@@ -1,3 +1,16 @@
+<?php
+/**
+ * Constants file
+ *
+ * @link       https://rfd.rs/
+ * @since      0.9.0
+ *
+ * @package    RFD\Core
+ * @subpackage RFD\Core\Views
+ */
+
+// @codingStandardsIgnoreStart
+?>
 <div class="modal micromodal-slide" id="modal-micro" aria-hidden="true">
     <div class="modal__overlay" tabindex="-1" data-micromodal-close>
         <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-micro-title">
