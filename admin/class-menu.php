@@ -47,7 +47,7 @@ class Menu {
 	 * Register menus.
 	 */
 	public function register() {
-		$this->load_settings_file();
+		$this->preload_settings();
 		$this->register_menus();
 		$this->register_submenus();
 	}
@@ -124,30 +124,45 @@ class Menu {
 	}
 
 	/**
-	 * Load pages from config file.
+	 * Preload settings
 	 */
-	private function load_settings_file() {
-		$config_file_path = RFD_CORE_CONFIG_PATH . 'admin/menu.php';
-		$config           = array();
-		// if file does not exist return false.
-		if ( true === file_exists( $config_file_path ) ) {
-			$config = include $config_file_path;
-		}
+	public function preload_settings() {
+		$config = $this->load_settings_file();
 
+		$this->preload_menu_pages( $config );
+	}
+
+	/**
+	 * Preload menu pages from config array.
+	 *
+	 * @param array $config Config array.
+	 */
+	private function preload_menu_pages( array $config ) {
 		foreach ( $config as $menu_id => $menu_config ) {
 
-			$menu_page_title = $menu_config['page_title'];
-			$menu_menu_title = $menu_config['menu_title'];
-			$menu_slug       = $menu_config['slug'];
-			$menu_capability = apply_filters( 'rfd_menu_' . $menu_id . '_capabilities', $menu_config['capability'] );
-			$menu_callback   = $menu_config['callback'];
-			$menu_icon       = $menu_config['icon'];
-			$menu_position   = $menu_config['position'];
+			$menu_slug = $this->store_menu_page( $menu_id, $menu_config );
+			$this->preload_submenu_pages( $menu_slug, $menu_config['submenus'] ?? array() );
+		}
+	}
 
-			if ( true === empty( $menu_slug ) ) {
-				continue;
-			}
+	/**
+	 * Store menu page
+	 *
+	 * @param string $menu_id Menu ID.
+	 * @param array $menu_config Menu config.
+	 *
+	 * @return string
+	 */
+	protected function store_menu_page( string $menu_id, array $menu_config ): string {
+		$menu_page_title = $menu_config['page_title'] ?? '';
+		$menu_menu_title = $menu_config['menu_title'] ?? '';
+		$menu_slug       = $menu_config['slug'] ?? '';
+		$menu_capability = apply_filters( 'rfd_menu_' . $menu_id . '_capabilities', $menu_config['capability'] ?? '' );
+		$menu_callback   = $menu_config['callback'] ?? null;
+		$menu_icon       = $menu_config['icon'] ?? '';
+		$menu_position   = $menu_config['position'] ?? '';
 
+		if ( false === empty( $menu_slug ) ) {
 			array_push(
 				$this->menus_pages,
 				array(
@@ -160,43 +175,53 @@ class Menu {
 					'position'   => $menu_position,
 				)
 			);
-
-			$submenus = array();
-			if ( true === isset( $menu_config['submenus'] ) ) {
-				$submenus = $menu_config['submenus'];
-			}
-
-			foreach ( $submenus as $submenu_id => $submenu_config ) {
-
-				$submenu_page_title = $submenu_config['page_title'];
-				$submenu_menu_title = $submenu_config['menu_title'];
-				$submenu_capability = apply_filters( 'rfd_submenu_ ' . $submenu_id . '_capabilities', $submenu_config['capability'] ); //phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
-				$submenu_callback   = $submenu_config['callback'];
-				$submenu_position   = $submenu_config['position'] ?? null;
-
-				if ( true === isset( $submenu_config['slug'] ) ) {
-					$submenu_slug = $submenu_config['slug'];
-				} else {
-					$submenu_slug = null;
-				}
-
-				if ( true === empty( $submenu_slug ) ) {
-					continue;
-				}
-
-				array_push(
-					$this->submenus_pages,
-					array(
-						'parent_slug' => $menu_slug,
-						'page_title'  => $submenu_page_title,
-						'menu_title'  => $submenu_menu_title,
-						'menu_slug'   => $submenu_slug,
-						'capability'  => $submenu_capability,
-						'callback'    => $submenu_callback,
-						'position'    => $submenu_position,
-					)
-				);
-			}
 		}
+
+		return $menu_slug;
+	}
+
+	/**
+	 * Preload submenu pages from config array
+	 *
+	 * @param string $menu_slug Parent menu slug.
+	 * @param array $config Submenus config.
+	 */
+	protected function preload_submenu_pages( string $menu_slug, array $config ) {
+		foreach ( $config as $submenu_id => $submenu_config ) {
+
+			$submenu_page_title = $submenu_config['page_title'] ?? '';
+			$submenu_menu_title = $submenu_config['menu_title'] ?? '';
+			$submenu_slug       = $submenu_config['slug'] ?? '';
+			$submenu_capability = apply_filters( 'rfd_submenu_ ' . $submenu_id . '_capabilities', $submenu_config['capability'] ); //phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
+			$submenu_callback   = $submenu_config['callback'] ?? null;
+			$submenu_position   = $submenu_config['position'] ?? 99;
+
+			array_push(
+				$this->submenus_pages,
+				array(
+					'parent_slug' => $menu_slug,
+					'page_title'  => $submenu_page_title,
+					'menu_title'  => $submenu_menu_title,
+					'menu_slug'   => $submenu_slug,
+					'capability'  => $submenu_capability,
+					'callback'    => $submenu_callback,
+					'position'    => $submenu_position,
+				)
+			);
+		}
+	}
+
+	/**
+	 * Load pages from config file.
+	 */
+	private function load_settings_file(): array {
+		$config_file_path = RFD_CORE_CONFIG_PATH . 'admin/menu.php';
+		$config           = array();
+		// if file does not exist return false.
+		if ( true === file_exists( $config_file_path ) ) {
+			$config = include $config_file_path;
+		}
+
+		return $config;
 	}
 }

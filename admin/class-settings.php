@@ -11,6 +11,7 @@
 namespace RFD\Core\Admin;
 
 use RFD\Core\Input;
+use RFD\Core\Loader;
 
 /**
  * Class Settings
@@ -40,10 +41,29 @@ class Settings {
 	 */
 	protected $fields = array();
 
-	public function __construct() {
-		$this->load_settings_file();
+	/**
+	 * Static init for easy access to library.
+	 *
+	 * @param Loader $loader Loader object.
+	 */
+	final public static function init( Loader $loader ) {
+		$menu = new static();
+		$loader->add_action( 'admin_menu', $menu, 'register' );
 	}
 
+	/**
+	 * Register
+	 */
+	public function register() {
+		$this->preload_settings();
+		$this->register_menu();
+		$this->register_sections();
+		$this->register_fields();
+	}
+
+	/**
+	 * Register menu
+	 */
 	public function register_menu() {
 		foreach ( $this->pages as $page ) {
 			register_setting( $page['id'], $page['id'] );
@@ -57,11 +77,9 @@ class Settings {
 		}
 	}
 
-	public function register_sections_and_fields() {
-		$this->register_sections();
-		$this->register_fields();
-	}
-
+	/**
+	 * Register sections
+	 */
 	public function register_sections() {
 		foreach ( $this->sections as $section ) {
 			add_settings_section(
@@ -73,6 +91,9 @@ class Settings {
 		}
 	}
 
+	/**
+	 * Register fields
+	 */
 	public function register_fields() {
 		foreach ( $this->fields as $field ) {
 			add_settings_field(
@@ -86,12 +107,11 @@ class Settings {
 		}
 	}
 
-	private function load_settings_file() {
-		$config_file_path = RFD_CORE_CONFIG_PATH . 'admin/settings.php';
-		$config           = array();
-		if ( true === file_exists( $config_file_path ) ) {
-			$config = include $config_file_path;
-		}
+	/**
+	 * Preload settings
+	 */
+	private function preload_settings() {
+		$config = $this->load_settings_file();
 
 		foreach ( $config as $page_block ) {
 			$page           = $page_block['id'];
@@ -134,7 +154,7 @@ class Settings {
 						array(
 							'id'       => $field,
 							'title'    => $field_block['title'],
-							'callback' => function ( $args ) use ( $page, $page_options, $field, $field_block ) {
+							'callback' => function () use ( $page, $page_options, $field, $field_block ) {
 								echo Input::render( //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 									array(
 										'id'          => $field,
@@ -157,5 +177,18 @@ class Settings {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Load settings file
+	 */
+	private function load_settings_file() {
+		$config_file_path = RFD_CORE_CONFIG_PATH . 'admin/settings.php';
+		$config           = array();
+		if ( true === file_exists( $config_file_path ) ) {
+			$config = include $config_file_path;
+		}
+
+		return $config;
 	}
 }

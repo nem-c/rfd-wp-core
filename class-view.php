@@ -10,6 +10,11 @@
 
 namespace RFD\Core;
 
+/**
+ * Class View
+ *
+ * @package RFD\Core
+ */
 class View {
 	/**
 	 * Get other templates passing attributes and including the file.
@@ -24,9 +29,7 @@ class View {
 		$template = self::locate_template( $template_name, $template_path, $default_path );
 
 		if ( empty( $args ) === false && is_array( $args ) ) {
-			if ( isset( $args['action_args'] ) ) {
-				unset( $args['action_args'] );
-			}
+			unset( $args['action_args'] );
 			extract( $args ); // @codingStandardsIgnoreLine
 		}
 		include $template;

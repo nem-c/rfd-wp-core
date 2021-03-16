@@ -4,7 +4,9 @@
 
     <config name="testVersion" value="7.1-"/>
 
-    <rule ref="WordPress"/>
+    <rule ref="WordPress">
+        <exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType"/>
+    </rule>
     <rule ref="PHPCompatibility"/>
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
@@ -14,7 +16,7 @@
     </rule>
     <rule ref="Generic.Metrics.NestingLevel">
         <properties>
-            <property name="absoluteNestingLevel" value="1"/>
+            <property name="absoluteNestingLevel" value="2"/>
         </properties>
     </rule>
 
