@@ -1,0 +1,17 @@
+{
+  "name": "nem-c/rfd-wp-core",
+  "description": "Core libraries for WP plugin and theme development based on PSR4 autoloader",
+  "type": "library",
+  "license": "GPLv2",
+  "authors": [
+    {
+      "name": "Nemanja Cimbaljevic",
+      "email": "zion.trooper@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require-dev": {
+    "phpcompatibility/php-compatibility": "master",
+    "dealerdirect/phpcodesniffer-composer-installer": "master"
+  }
+}
