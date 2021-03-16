@@ -19,17 +19,67 @@ use RFD\Core\Loader;
  */
 abstract class Site_Tab {
 
-	protected $loader;
+	/**
+	 * Blog ID
+	 *
+	 * @var int
+	 */
 	protected $blog_id;
 
+	/**
+	 * Save action name
+	 *
+	 * @var string
+	 */
 	protected $save_action = '';
+
+	/**
+	 * Nonce action name
+	 *
+	 * @var string
+	 */
 	protected $nonce_action = 'save';
+
+	/**
+	 * Nonce name
+	 *
+	 * @var string
+	 */
 	protected $nonce_name = '';
 
+	/**
+	 * Tab name
+	 *
+	 * @var string
+	 */
 	protected $tab_name;
+
+	/**
+	 * Tab label
+	 *
+	 * @var string
+	 */
 	protected $tab_label;
+
+	/**
+	 * Tab URL
+	 *
+	 * @var string
+	 */
 	protected $tab_url;
+
+	/**
+	 * Tab capabilities
+	 *
+	 * @var string
+	 */
 	protected $tab_cap = 'manage_sites';
+
+	/**
+	 * Tab menu slug
+	 *
+	 * @var string
+	 */
 	protected $tab_menu_slug;
 
 	/**
@@ -37,13 +87,15 @@ abstract class Site_Tab {
 	 *
 	 * @param Loader $loader Loader object.
 	 */
-	public function init( Loader $loader ) {
-		$this->nonce_name  = sprintf( '%s-%s', $this->tab_name, $this->blog_id );
-		$this->save_action = sprintf( '%s_save', $this->tab_menu_slug );
+	final public static function init( Loader $loader ) {
+		$site_tab = new static();
 
-		$this->loader->add_filter( 'network_edit_site_nav_links', $this, 'add_tabs' );
-		$this->loader->add_action( 'network_admin_menu', $this, 'register_menu' );
-		$this->loader->add_action( 'network_admin_edit_' . $this->tab_menu_slug . '_save', $this, 'form_handler' );
+		$site_tab->nonce_name  = sprintf( '%s-%s', $site_tab->tab_name, $site_tab->blog_id );
+		$site_tab->save_action = sprintf( '%s_save', $site_tab->tab_menu_slug );
+
+		$loader->add_filter( 'network_edit_site_nav_links', $site_tab, 'add_tabs' );
+		$loader->add_action( 'network_admin_menu', $site_tab, 'register_menu' );
+		$loader->add_action( 'network_admin_edit_' . $site_tab->tab_menu_slug . '_save', $site_tab, 'form_handler' );
 	}
 
 	/**

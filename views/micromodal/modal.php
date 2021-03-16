@@ -1,11 +1,9 @@
 <div class="modal micromodal-slide" id="modal-micro" aria-hidden="true">
     <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-        <div class="modal__container" role="dialog" aria-modal="true"
-             aria-labelledby="modal-micro-title">
+        <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-micro-title">
             <header class="modal__header" id="modal-micro-header">
                 <h3 class="modal__title" id="modal-micro-title"></h3>
-                <button class="modal__close" aria-label="Close modal"
-                        data-micromodal-close>
+                <button class="modal__close" aria-label="Close modal" data-micromodal-close>
                     Close
                 </button>
             </header>
