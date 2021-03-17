@@ -27,7 +27,7 @@ abstract class User_Meta_Box {
 	 *
 	 * @var string
 	 */
-	protected $id = 'custom-user-meta-box'; //phpcs:ignore Generic.PHP.Syntax.PHPSyntax
+	protected $id = 'custom-user-meta-box';
 
 	/**
 	 * User meta box context definition

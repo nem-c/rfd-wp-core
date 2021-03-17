@@ -84,6 +84,8 @@ abstract class Init {
 	public function prepare(): self {
 		$this->loader = new Loader();
 
+		$this->prepare_general();
+
 		$this->set_locale();
 
 		$this->register_post_statuses();
@@ -92,12 +94,11 @@ abstract class Init {
 		$this->schedule_jobs();
 		Enqueue::init( $this->loader );
 
-		$this->prepare_general();
-
 		if ( is_admin() === true ) {
+			$this->prepare_admin();
+
 			Menu::init( $this->loader );
 			$this->register_meta_boxes();
-			$this->prepare_admin();
 		} else {
 			$this->prepare_frontend();
 		}

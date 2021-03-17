@@ -12,9 +12,7 @@
  * @subpackage RFD\Core\Abstracts
  */
 
-namespace RFD\Core\Abstracts;
-
-use RFD\Core\Loader;
+namespace RFD\Core;
 
 /**
  * Class I18n
