@@ -72,6 +72,7 @@ class Input {
 					'select',
 					'cats',
 					'categories',
+					'checkbox_group',
 				),
 				true
 			)
@@ -95,7 +96,7 @@ class Input {
 		$input = '';
 
 		$method = 'render_' . $type;
-		if ( true === method_exists( 'Input', $method ) ) {
+		if ( true === method_exists( __CLASS__, $method ) ) {
 			$input = self::$method( $id, $field_name, $field_value, $type, $title, $options, $editor, $attributes, $multiple );
 		}
 
@@ -112,7 +113,7 @@ class Input {
 	 *
 	 * @param string $id id attribute.
 	 * @param string $field_name field attribute.
-	 * @param string $value input value.
+	 * @param string|array $value input value.
 	 * @param string $type input type.
 	 * @param string $title title.
 	 * @param array $options additional options.
@@ -122,7 +123,7 @@ class Input {
 	 *
 	 * @return string
 	 */
-	protected static function render_radio( string $id, string $field_name, string $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+	protected static function render_radio( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
 		$input = '<fieldset>';
 		foreach ( $options as $key => $option ) {
 			$input .= '<label title="' . $option . '">';
@@ -140,7 +141,7 @@ class Input {
 	 *
 	 * @param string $id id attribute.
 	 * @param string $field_name field attribute.
-	 * @param string $value input value.
+	 * @param string|array $value input value.
 	 * @param string $type input type.
 	 * @param string $title title.
 	 * @param array $options additional options.
@@ -150,13 +151,13 @@ class Input {
 	 *
 	 * @return string
 	 */
-	protected static function render_textarea( string $id, string $field_name, string $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+	protected static function render_textarea( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
 		if ( true === $editor['visual'] ) {
 			ob_start();
 			wp_editor( $value, $id, $editor );
 			$input = ob_get_clean();
 		} else {
-			$input = '<textarea name="' . $field_name . '" id="' . $id . '"' . $attributes . '>' . $value . '</textarea>';
+			$input = '<textarea name="' . $field_name . '" id="' . $id . '" ' . $attributes . '>' . $value . '</textarea>';
 		}
 
 		return $input;
@@ -167,7 +168,7 @@ class Input {
 	 *
 	 * @param string $id id attribute.
 	 * @param string $field_name field attribute.
-	 * @param string $value input value.
+	 * @param string|array $value input value.
 	 * @param string $type input type.
 	 * @param string $title title.
 	 * @param array $options additional options.
@@ -177,7 +178,7 @@ class Input {
 	 *
 	 * @return string
 	 */
-	protected static function render_select( string $id, string $field_name, string $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+	protected static function render_select( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
 		$input = '<select name="' . $field_name . ( $multiple ? '[]' : '' ) . '" id="' . $id . '" ' . $attributes . '>';
 
 		$input .= '<option value="0">&ndash; ' . __( 'Select', 'rfd-wp-core' ) . ' &ndash;</option>';
@@ -199,7 +200,7 @@ class Input {
 	 *
 	 * @param string $id id attribute.
 	 * @param string $field_name field attribute.
-	 * @param string $value input value.
+	 * @param string|array $value input value.
 	 * @param string $type input type.
 	 * @param string $title title.
 	 * @param array $options additional options.
@@ -209,7 +210,7 @@ class Input {
 	 *
 	 * @return string
 	 */
-	protected static function render_categories( string $id, string $field_name, string $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+	protected static function render_categories( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
 		$input = '<select name="' . $field_name . ( $multiple ? '[]' : '' ) . '" id="' . $id . '" ' . $attributes . '>';
 
 		$input .= '<option value="0">&ndash; ' . __( 'Select', 'rfd-wp-core' ) . ' &ndash;</option>';
@@ -231,7 +232,7 @@ class Input {
 	 *
 	 * @param string $id id attribute.
 	 * @param string $field_name field attribute.
-	 * @param string $value input value.
+	 * @param string|array $value input value.
 	 * @param string $type input type.
 	 * @param string $title title.
 	 * @param array $options additional options.
@@ -241,7 +242,7 @@ class Input {
 	 *
 	 * @return string
 	 */
-	protected static function render_cats( string $id, string $field_name, string $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+	protected static function render_cats( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
 		return self::render_categories( $id, $field_name, $value, $type, $title, $options, $editor, $attributes, $multiple );
 	}
 
@@ -250,7 +251,7 @@ class Input {
 	 *
 	 * @param string $id id attribute.
 	 * @param string $field_name field attribute.
-	 * @param string $value input value.
+	 * @param string|array $value input value.
 	 * @param string $type input type.
 	 * @param string $title title.
 	 * @param array $options additional options.
@@ -260,7 +261,7 @@ class Input {
 	 *
 	 * @return string
 	 */
-	protected static function render_thumbnails( string $id, string $field_name, string $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+	protected static function render_thumbnails( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
 		$input = '<select name="' . $field_name . '" id="' . $id . '" "' . $attributes . '">';
 
 		$input .= '<option value="0">&ndash; ' . __( 'Select', 'rfd-wp-core' ) . ' &ndash;</option>';
@@ -277,7 +278,7 @@ class Input {
 	 *
 	 * @param string $id id attribute.
 	 * @param string $field_name field attribute.
-	 * @param string $value input value.
+	 * @param string|array $value input value.
 	 * @param string $type input type.
 	 * @param string $title title.
 	 * @param array $options additional options.
@@ -287,7 +288,7 @@ class Input {
 	 *
 	 * @return string
 	 */
-	protected static function render_image( string $id, string $field_name, string $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+	protected static function render_image( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
 		$input = '<input id="' . $id . '" type="text" size="36" name="' . $field_name . '" placeholder="http://..." value="' . $value . '" />';
 
 		$input .= '<input class="button image-upload" data-field="#' . $id . '" type="button" value="' . __( 'Upload Image', 'rfd-wp-core' ) . '" />';
@@ -300,7 +301,7 @@ class Input {
 	 *
 	 * @param string $id id attribute.
 	 * @param string $field_name field attribute.
-	 * @param string $value input value.
+	 * @param string|array $value input value.
 	 * @param string $type input type.
 	 * @param string $title title.
 	 * @param array $options additional options.
@@ -310,14 +311,55 @@ class Input {
 	 *
 	 * @return string
 	 */
-	protected static function render_checkbox( string $id, string $field_name, string $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
-		$input = ' < fieldset class="checkbox-label aus-label" > ';
+	protected static function render_checkbox( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+		if ( true === $multiple ) {
+			$input = self::render_checkbox_group( $id, $field_name, $value, $type, $title, $options, $editor, $attributes, $multiple );
+		} else {
+			$input = '<fieldset class="checkbox-label aus-label">';
 
-		$input .= '<label title = "' . $id . '" > ';
-		$input .= '<input name = "' . $field_name . '" id = "' . $id . ' type="' . $type . ' value = "1"' . $attributes . ( $value ? 'checked = "checked"' : '' ) . ' />';
-		$input .= $title;
-		$input .= '</label > ';
-		$input .= '<span class="checkbox ' . ( $value ? 'checked' : '' ) . '></span>';
+			$input .= '<label title="' . $id . '">';
+			$input .= '<input name="' . $field_name . '" id="' . $id . '" type="' . $type . '" value="1"' . $attributes . ( $value ? 'checked = "checked"' : '' ) . ' />';
+			$input .= $title;
+			$input .= '</label > ';
+			$input .= '<span class="checkbox ' . ( $value ? 'checked' : '' ) . '"></span>';
+			$input .= '</fieldset>';
+		}
+
+		return $input;
+	}
+
+	/**
+	 * Render checkbox group.
+	 *
+	 * @param string $id id attribute.
+	 * @param string $field_name field attribute.
+	 * @param string|array $value input value.
+	 * @param string $type input type.
+	 * @param string $title title.
+	 * @param array $options additional options.
+	 * @param array $editor wp-editor.
+	 * @param string $attributes additional attributes.
+	 * @param bool $multiple Multiple selection.
+	 *
+	 * @return string
+	 */
+	protected static function render_checkbox_group( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+		if ( false === is_array( $value ) ) {
+			$value = array( $value );
+		}
+		$input = '<fieldset class="checkbox-label aus-label">';
+
+		$input .= '<label>' . $title . '</label>';
+		foreach ( $options as $option_value => $option_label ) {
+			$unique_id = sanitize_title_with_dashes( $id . '-' . $option_value );
+			$checked   = in_array( $option_value, $value, true );
+
+			$input .= '<label for="' . $unique_id . '" title="' . $option_label . '">';
+			$input .= '<input name="' . $field_name . '[]" id="' . $unique_id . '" type="checkbox" value="' . $option_value . '" ' . $attributes . ' ' . ( $checked ? 'checked="checked"' : '' ) . '/>';
+			$input .= $option_label;
+			$input .= '</label > ';
+			$input .= '<span class="checkbox ' . ( $checked ? 'checked' : '' ) . '"></span>';
+		}
 		$input .= '</fieldset>';
 
 		return $input;
@@ -328,7 +370,7 @@ class Input {
 	 *
 	 * @param string $id id attribute.
 	 * @param string $field_name field attribute.
-	 * @param string $value input value.
+	 * @param string|array $value input value.
 	 * @param string $type input type.
 	 * @param string $title title.
 	 * @param array $options additional options.
@@ -338,7 +380,7 @@ class Input {
 	 *
 	 * @return string
 	 */
-	protected static function render_date( string $id, string $field_name, string $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+	protected static function render_date( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
 		return '<input name="' . $field_name . '" id="' . $id . '" type="' . $type . '" value="' . $value . '"' . $attributes . ' />';
 	}
 
@@ -347,7 +389,7 @@ class Input {
 	 *
 	 * @param string $id id attribute.
 	 * @param string $field_name field attribute.
-	 * @param string $value input value.
+	 * @param string|array $value input value.
 	 * @param string $type input type.
 	 * @param string $title title.
 	 * @param array $options additional options.
@@ -357,7 +399,7 @@ class Input {
 	 *
 	 * @return string
 	 */
-	protected static function render_text( string $id, string $field_name, string $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+	protected static function render_text( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
 		return '<input name="' . $field_name . '" id="' . $id . '" type="' . $type . '" value="' . $value . '"' . $attributes . ' />';
 	}
 
@@ -366,7 +408,7 @@ class Input {
 	 *
 	 * @param string $id id attribute.
 	 * @param string $field_name field attribute.
-	 * @param string $value input value.
+	 * @param string|array $value input value.
 	 * @param string $type input type.
 	 * @param string $title title.
 	 * @param array $options additional options.
@@ -376,7 +418,7 @@ class Input {
 	 *
 	 * @return string
 	 */
-	protected static function render_email( string $id, string $field_name, string $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+	protected static function render_email( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
 		return self::render_text( $id, $field_name, $value, $type, $title, $options, $editor, $attributes, $multiple );
 	}
 
