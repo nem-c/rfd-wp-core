@@ -348,8 +348,6 @@ class Input {
 			$value = array( $value );
 		}
 		$input = '<fieldset class="checkbox-label aus-label">';
-
-		$input .= '<label>' . $title . '</label>';
 		foreach ( $options as $option_value => $option_label ) {
 			$unique_id = sanitize_title_with_dashes( $id . '-' . $option_value );
 			$checked   = in_array( $option_value, $value, true );

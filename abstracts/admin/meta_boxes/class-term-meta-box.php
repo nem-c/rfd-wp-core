@@ -54,7 +54,7 @@ abstract class Term_Meta_Box {
 	 *
 	 * @var string
 	 */
-	protected $nonce_name = '_product_cat_term_save_nonce';
+	protected $nonce_name = '';
 
 	/**
 	 * Nonce save action name
@@ -75,7 +75,7 @@ abstract class Term_Meta_Box {
 	 *
 	 * @var string
 	 */
-	protected $lang_domain = 'rfd-woo-variable-tables';
+	protected $lang_domain = 'rfd-woo-variable-table';
 
 	/**
 	 * Static init for easy access to library
@@ -91,8 +91,7 @@ abstract class Term_Meta_Box {
 		$loader->add_action( $term_meta_box->taxonomy . '_add_form_fields', $term_meta_box, 'do_meta_boxes', 25 );
 
 		$loader->add_action( 'add_meta_boxes', $term_meta_box, 'register' );
-		$loader->add_action( 'edit_user_profile_update', $term_meta_box, 'maybe_save', $priority );
-		$loader->add_action( 'personal_options_update', $term_meta_box, 'maybe_save', $priority );
+		$loader->add_action( 'saved_term', $term_meta_box, 'maybe_save', $priority, 4 );
 	}
 
 	/**
@@ -177,10 +176,13 @@ abstract class Term_Meta_Box {
 	 * Determines should save be called.
 	 *
 	 * @param int $term_id Term ID.
+	 * @param int $tt_id Term-taxonomy ID.
+	 * @param string $taxonomy Taxonomy.
+	 * @param bool $update Update (true) or create (false).
 	 *
 	 * @return bool
 	 */
-	public function maybe_save( int $term_id ): bool {
+	public function maybe_save( int $term_id, int $tt_id, string $taxonomy, bool $update ): bool {
 		if ( true === empty( $this->nonce_name ) || true === empty( $this->nonce_action ) ) {
 			/* translators: name of missing nonce name */
 			$error_text = _x( 'Nonce validation not set for %s', 'name of missing nonce name', $this->lang_domain ); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain
@@ -193,7 +195,7 @@ abstract class Term_Meta_Box {
 			Logger::log( $verified, true );
 		}
 
-		return $this->save( $term_id );
+		return $this->save( $term_id, $tt_id, $taxonomy, $update );
 	}
 
 	/**
@@ -207,10 +209,13 @@ abstract class Term_Meta_Box {
 	 * Save user meta data.
 	 *
 	 * @param int $term_id Term ID.
+	 * @param int $tt_id Term-taxonomy ID.
+	 * @param string $taxonomy Taxonomy.
+	 * @param bool $update Update (true) or create (false).
 	 *
 	 * @return bool
 	 */
-	abstract public function save( int $term_id ): bool;
+	abstract public function save( int $term_id, int $tt_id, string $taxonomy, bool $update ): bool;
 
 	/**
 	 * Renders nonce field
