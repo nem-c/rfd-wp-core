@@ -20,7 +20,7 @@ class Loader {
 	 *
 	 * @since    0.9.0
 	 * @access   protected
-	 * @var      array $actions The actions registered with WordPress to fire when the plugin loads.
+	 * @var      array $actions The actions registered with Word	Press to fire when the plugin loads.
 	 */
 	protected $actions = array();
 	/**

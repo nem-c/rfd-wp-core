@@ -24,7 +24,6 @@
     <arg name="colors"/>
     <arg name="parallel" value="100"/>
     <arg name="extensions" value="php"/>
-    <arg name="cache" value=".phpcs.cache"/>
 
     <exclude-pattern>\.github/*</exclude-pattern>
     <exclude-pattern>vendor/*</exclude-pattern>
