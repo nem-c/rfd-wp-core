@@ -128,7 +128,7 @@ abstract class Term_Meta_Box {
 	 * @param mixed $tag Tag object.
 	 */
 	public function do_meta_boxes( $tag ): void {
-		echo '<style>#poststuff {min-width: auto;} #' . $this->id . ' .handle-actions {display: none;} #' . $this->id . ' .postbox-header .hndle {cursor: default;} </style>';
+		echo '<style>#poststuff {min-width: auto; overflow: auto;} #' . $this->id . ' .handle-actions {display: none;} #' . $this->id . ' .postbox-header .hndle {cursor: default;} </style>';
 		echo '<div id="poststuff"><div id="postbox-container-2" class="postbox-container">';
 		do_meta_boxes( 'term', 'normal', $tag );
 		echo '</div></div>';
