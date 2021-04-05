@@ -49,7 +49,9 @@ class View {
 		ob_start();
 		self::render_template( $template_name, $args, $template_path, $default_path );
 
-		return ob_get_clean();
+		$html = ob_get_clean();
+
+		return (string) $html;
 	}
 
 	/**

@@ -79,8 +79,8 @@ abstract class Comment_Meta_Box {
 	 * @param Loader $loader Loader object.
 	 * @param int $priority Default priority for edit_comment hook.
 	 */
-	final public static function init( Loader $loader, $priority = 10 ) {
-		$meta_box = new static();
+	final public static function init( Loader $loader, $priority = 10 ): void {
+		$meta_box = new static(); // @phpstan-ignore-line.
 		$loader->add_action( 'add_meta_boxes', $meta_box, 'register' );
 		$loader->add_action( 'edit_comment', $meta_box, 'maybe_save', $priority, 2 );
 	}
@@ -88,7 +88,7 @@ abstract class Comment_Meta_Box {
 	/**
 	 * Register meta box
 	 */
-	public function register() {
+	public function register(): void {
 		$title = __( $this->title, $this->lang_domain ); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText, WordPress.WP.I18n.NonSingularStringLiteralDomain
 
 		add_meta_box(
@@ -136,12 +136,12 @@ abstract class Comment_Meta_Box {
 			/* translators: name of missing nonce name */
 			$error_text = _x( 'Nonce validation not set for %s', 'name of missing nonce name', $this->lang_domain ); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain
 			$error      = new WP_Error( 'rfd-error', sprintf( $error_text, $this->id ) );
-			Logger::log( $error, true );
+			Logger::log( $error, true ); // @phpstan-ignore-line.
 		}
 
 		$verified = $this->verify( $comment_id, sanitize_text_field( wp_unslash( $_POST[ $this->nonce_name ] ?? '' ) ) ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( is_wp_error( $verified ) ) {
-			Logger::log( $verified, true );
+			Logger::log( $verified, true ); // @phpstan-ignore-line.
 		}
 
 		return $this->save( $comment_id, $comment_data );

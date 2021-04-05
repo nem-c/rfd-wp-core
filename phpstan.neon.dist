@@ -1,0 +1,24 @@
+includes:
+  - phar://phpstan.phar/conf/bleedingEdge.neon
+  - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+  level: max
+  inferPrivatePropertyTypeFromConstructor: true
+  checkMissingIterableValueType: false
+  paths:
+    - %currentWorkingDirectory%/
+  excludes_analyse:
+    - %currentWorkingDirectory%/tests/*
+    - vendor
+    - autoload.php
+  bootstrapFiles:
+    - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+    - constants.php
+    - class-enqueue.php
+    - class-loader.php
+    - class-logger.php
+    - admin/class-menu.php
+    - admin/class-settings.php
+    - class-input.php
+    - class-view.php

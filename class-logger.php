@@ -23,9 +23,9 @@ class Logger {
 	 * @param mixed $log Data to log.
 	 * @param false $wp_die Run wp die after log.
 	 */
-	public static function log( $log, $wp_die = false ) {
+	public static function log( $log, $wp_die = false ): void {
 		self::write( $log );
-		if ( true === $wp_die ) {
+		if ( true === $wp_die ) { // @phpstan-ignore-line.
 			wp_die( esc_attr__( $log ) ); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
 		}
 	}
@@ -35,7 +35,7 @@ class Logger {
 	 *
 	 * @param mixed $log Data to log.
 	 */
-	public static function write( $log ) {
+	public static function write( $log ): void {
 		if ( true !== WP_DEBUG ) {
 			return;
 		}

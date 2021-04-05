@@ -32,8 +32,8 @@ class Gallery_Lightbox {
 	 *
 	 * @param Loader $loader Loader object.
 	 */
-	final public static function init( Loader $loader ) {
-		$gallery_lightbox_ext = new static();
+	final public static function init( Loader $loader ): void {
+		$gallery_lightbox_ext = new static(); // @phpstan-ignore-line
 
 		$loader->add_action( 'wp_enqueue_scripts', $gallery_lightbox_ext, 'register_assets' );
 		$loader->add_action( 'wp_enqueue_scripts', $gallery_lightbox_ext, 'enqueue_assets' );
@@ -42,7 +42,7 @@ class Gallery_Lightbox {
 	/**
 	 * Register assets
 	 */
-	public function register_assets() {
+	public function register_assets(): void {
 		wp_register_script( 'baguette-box', RFD_CORE_ASSETS_URL . 'baguette-box/baguetteBox.min.js', array(), '1.11.1', true );
 		wp_add_inline_script( 'baguette-box', 'window.addEventListener("load", function() {var options={captions:function(t){var e=t.parentElement.getElementsByTagName("figcaption")[0];return!!e&&e.innerHTML}};baguetteBox.run(".wp-block-gallery",options);baguetteBox.run(".wp-block-image",options);});' );
 		wp_register_style( 'baguette-box-css', RFD_CORE_ASSETS_URL . '/baguette-box/baguetteBox.min.css', array(), '1.11.1' );
@@ -51,7 +51,7 @@ class Gallery_Lightbox {
 	/**
 	 * Enqueue assets
 	 */
-	public function enqueue_assets() {
+	public function enqueue_assets(): void {
 		wp_enqueue_script( 'baguette-box' );
 		wp_enqueue_style( 'baguette-box-css' );
 	}

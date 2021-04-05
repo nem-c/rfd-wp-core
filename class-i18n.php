@@ -17,7 +17,7 @@ namespace RFD\Core;
 /**
  * Class I18n
  */
-class I18n {
+final class I18n {
 
 	/**
 	 * Domain lang to be used
@@ -39,8 +39,8 @@ class I18n {
 	 * @param Loader $loader Loader object.
 	 * @param array $props custom properties to be used.
 	 */
-	final public static function init( Loader $loader, $props = array() ) {
-		$i18n = new static();
+	public static function init( Loader $loader, $props = array() ): void {
+		$i18n = new I18n();
 		foreach ( $props as $prop_name => $prop_value ) {
 			$i18n->$prop_name = $prop_value;
 		}

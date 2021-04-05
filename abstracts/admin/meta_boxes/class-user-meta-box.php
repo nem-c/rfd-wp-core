@@ -78,8 +78,8 @@ abstract class User_Meta_Box {
 	 * @param Loader $loader Loader object.
 	 * @param int $priority Default priority for edit_comment hook.
 	 */
-	final public static function init( Loader $loader, $priority = 10 ) {
-		$instance = new static();
+	final public static function init( Loader $loader, $priority = 10 ): void {
+		$instance = new static(); // @phpstan-ignore-line.
 
 		$loader->add_action( 'load-profile.php', $instance, 'add_meta_boxes', 25 );
 		$loader->add_action( 'load-user-edit.php', $instance, 'trigger_meta_boxes', 25 );
@@ -94,7 +94,7 @@ abstract class User_Meta_Box {
 	/**
 	 * Adds metabox on user page as it is not supported by default
 	 */
-	public function add_meta_boxes() {
+	public function add_meta_boxes(): void {
 		global $pagenow, $user_id;
 
 		$user = null;
@@ -121,7 +121,7 @@ abstract class User_Meta_Box {
 	/**
 	 * Register meta box
 	 */
-	public function register() {
+	public function register(): void {
 		$title = __( $this->title, $this->lang_domain ); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText, WordPress.WP.I18n.NonSingularStringLiteralDomain
 
 		add_meta_box(
@@ -168,12 +168,12 @@ abstract class User_Meta_Box {
 			/* translators: name of missing nonce name */
 			$error_text = _x( 'Nonce validation not set for %s', 'name of missing nonce name', $this->lang_domain ); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain
 			$error      = new WP_Error( 'rfd-error', sprintf( $error_text, $this->id ) );
-			Logger::log( $error, true );
+			Logger::log( $error, true ); // @phpstan-ignore-line.
 		}
 
 		$verified = $this->verify( $user_id, sanitize_text_field( wp_unslash( $_POST[ $this->nonce_name ] ?? '' ) ) ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( is_wp_error( $verified ) ) {
-			Logger::log( $verified, true );
+			Logger::log( $verified, true ); // @phpstan-ignore-line.
 		}
 
 		return $this->save( $user_id );

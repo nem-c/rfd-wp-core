@@ -192,6 +192,10 @@ abstract class Init {
 	protected function schedule_jobs(): void {
 		$jobs = array();
 
+		if ( true === empty( $jobs ) ) {
+			return;
+		}
+
 		foreach ( $jobs as $job ) {
 			$this->loader->add_action( 'init', $job, 'schedule' );
 			$this->loader->add_action( $job->get_schedule_name(), $job, 'execute' );
@@ -248,7 +252,7 @@ abstract class Init {
 	 *
 	 * @since 2.0.0
 	 */
-	public function run() {
+	public function run(): void {
 		$this->loader->run();
 	}
 

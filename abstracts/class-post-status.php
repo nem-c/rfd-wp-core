@@ -115,8 +115,8 @@ abstract class Post_Status {
 	 *
 	 * @param Loader $loader Loader object.
 	 */
-	final public static function init( Loader $loader ) {
-		$post_status = new static();
+	final public static function init( Loader $loader ): void {
+		$post_status = new static(); // @phpstan-ignore-line
 
 		$loader->add_action( 'init', $post_status, 'register' );
 	}
@@ -124,7 +124,7 @@ abstract class Post_Status {
 	/**
 	 * Register post status
 	 */
-	public function register() {
+	public function register(): void {
 		register_post_status( $this->name, $this->get_args() );
 	}
 

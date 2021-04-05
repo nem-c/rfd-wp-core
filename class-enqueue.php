@@ -15,7 +15,7 @@ namespace RFD\Core;
  *
  * @package RFD\Core
  */
-class Enqueue {
+final class Enqueue {
 
 	/**
 	 * Registered admin assets
@@ -42,8 +42,8 @@ class Enqueue {
 	 *
 	 * @param Loader $loader Loader object.
 	 */
-	final public static function init( Loader $loader ) {
-		$enqueue = new static();
+	public static function init( Loader $loader ): void {
+		$enqueue = new Enqueue();
 		if ( true === is_admin() ) {
 			$enqueue->load_admin_configuration();
 			$loader->add_action( 'admin_enqueue_scripts', $enqueue, 'enqueue_admin_assets' );
@@ -55,14 +55,14 @@ class Enqueue {
 	/**
 	 * Enqueue admin assets
 	 */
-	public function enqueue_admin_assets() {
+	public function enqueue_admin_assets(): void {
 		$this->enqueue_assets( $this->admin_assets );
 	}
 
 	/**
 	 * Enqueue frontend assets
 	 */
-	public function enqueue_frontend_assets() {
+	public function enqueue_frontend_assets(): void {
 		$this->enqueue_assets( $this->frontend_assets );
 	}
 
@@ -71,7 +71,7 @@ class Enqueue {
 	 *
 	 * @param array $assets Assets array.
 	 */
-	public function enqueue_assets( array $assets ) {
+	public function enqueue_assets( array $assets ): void {
 		foreach ( $assets['js'] as $js_asset ) {
 			$this->enqueue_script( $js_asset );
 		}
@@ -86,7 +86,7 @@ class Enqueue {
 	 *
 	 * @param string|array $asset Script config array.
 	 */
-	protected function enqueue_script( $asset ) {
+	protected function enqueue_script( $asset ): void {
 		if ( false === is_array( $asset ) ) {
 			wp_enqueue_script( $asset );
 		} else {
@@ -105,7 +105,7 @@ class Enqueue {
 	 *
 	 * @param array $asset Script config array.
 	 */
-	protected function enqueue_style( array $asset ) {
+	protected function enqueue_style( array $asset ): void {
 		wp_enqueue_style(
 			$asset['handle'],
 			$asset['src'],
@@ -117,7 +117,7 @@ class Enqueue {
 	/**
 	 * Load frontend configuration file
 	 */
-	protected function load_frontend_configuration() {
+	protected function load_frontend_configuration(): void {
 		$config_file_path = RFD_CORE_CONFIG_PATH . 'enqueue.php';
 		$config_array     = $this->load_config_file( $config_file_path );
 		$this->store_configuration( $config_array );
@@ -126,7 +126,7 @@ class Enqueue {
 	/**
 	 * Load admin configuration file
 	 */
-	protected function load_admin_configuration() {
+	protected function load_admin_configuration(): void {
 		$config_file_path = RFD_CORE_CONFIG_PATH . 'admin/enqueue.php';
 		$config_array     = $this->load_config_file( $config_file_path );
 		$this->store_configuration( $config_array, 'admin' );
@@ -138,7 +138,7 @@ class Enqueue {
 	 * @param array $config_array Configuration array for assets.
 	 * @param string $type Configuration type (frontend or admin).
 	 */
-	protected function store_configuration( array $config_array, string $type = 'frontend' ) {
+	protected function store_configuration( array $config_array, string $type = 'frontend' ): void { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded,Generic.Metrics.NestingLevel.MaxExceeded
 		$type_attribute = $type . '_assets';
 
 		$js_config  = $config_array['js'] ?? array();

@@ -87,8 +87,8 @@ abstract class Site_Tab {
 	 *
 	 * @param Loader $loader Loader object.
 	 */
-	final public static function init( Loader $loader ) {
-		$site_tab = new static();
+	final public static function init( Loader $loader ): void {
+		$site_tab = new static(); // @phpstan-ignore-line.
 
 		$site_tab->nonce_name  = sprintf( '%s-%s', $site_tab->tab_name, $site_tab->blog_id );
 		$site_tab->save_action = sprintf( '%s_save', $site_tab->tab_menu_slug );
@@ -118,7 +118,7 @@ abstract class Site_Tab {
 	/**
 	 * Register Menu
 	 */
-	public function register_menu() {
+	public function register_menu(): void {
 		add_submenu_page(
 			'sites.php',
 			__( 'Edit website' ),
@@ -144,14 +144,14 @@ abstract class Site_Tab {
 	/**
 	 * Check nonce before save
 	 */
-	public function check_nonce() {
+	public function check_nonce(): void {
 		check_admin_referer( $this->nonce_action, $this->nonce_name );
 	}
 
 	/**
 	 * Get blog ID from various sources.
 	 */
-	protected function get_blog_id() {
+	protected function get_blog_id(): void {
 		if ( true === isset( $_POST['blog_id'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Missing
 			$this->blog_id = intval( $_POST['blog_id'] ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
 		} elseif ( true === isset( $_GET['id'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended

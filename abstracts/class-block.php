@@ -20,37 +20,37 @@ abstract class Block {
 	/**
 	 * Block build Config
 	 *
-	 * @var null $build_config
+	 * @var string $build_config
 	 */
-	protected $build_config = null;
+	protected $build_config = '';
 
 	/**
 	 * Block Name
 	 *
-	 * @var null $name
+	 * @var string $name
 	 */
-	protected $name = null;
+	protected $name = '';
 
 	/**
 	 * Block editor handle
 	 *
-	 * @var null $editor_handle
+	 * @var string $editor_handle
 	 */
-	protected $editor_handle = null;
+	protected $editor_handle = '';
 
 	/**
 	 * Block editor script file src
 	 *
-	 * @var null $editor_script_src
+	 * @var string $editor_script_src
 	 */
-	protected $editor_script_src = null;
+	protected $editor_script_src = '';
 
 	/**
 	 * Block editor script file path
 	 *
-	 * @var null $editor_script_path
+	 * @var string $editor_script_path
 	 */
-	protected $editor_script_path = null;
+	protected $editor_script_path = '';
 
 	/**
 	 * Block dependencies
@@ -68,16 +68,16 @@ abstract class Block {
 	/**
 	 * Block editor style file src
 	 *
-	 * @var null $editor_style_src
+	 * @var string $editor_style_src
 	 */
-	protected $editor_style_src = null;
+	protected $editor_style_src = '';
 
 	/**
 	 * Block editor style file path
 	 *
-	 * @var null $editor_style_path
+	 * @var string $editor_style_path
 	 */
-	protected $editor_style_path = null;
+	protected $editor_style_path = '';
 
 	/**
 	 * Block editor style dependencies
@@ -98,16 +98,16 @@ abstract class Block {
 	/**
 	 * Frontend style src
 	 *
-	 * @var null $frontend_style_src
+	 * @var string $frontend_style_src
 	 */
-	protected $frontend_style_src = null;
+	protected $frontend_style_src = '';
 
 	/**
 	 * Frontend style path
 	 *
-	 * @var null $frontend_style_path
+	 * @var string $frontend_style_path
 	 */
-	protected $frontend_style_path = null;
+	protected $frontend_style_path = '';
 
 	/**
 	 * Frontend style dependencies
@@ -127,7 +127,7 @@ abstract class Block {
 	/**
 	 * Register block
 	 */
-	public function register() {
+	public function register(): void {
 
 		$this->register_editor();
 		$this->register_frontend();
@@ -144,7 +144,7 @@ abstract class Block {
 	 *
 	 * @see register_block_type_from_metadata()
 	 */
-	protected function register_from_file() {
+	protected function register_from_file(): void {
 		register_block_type_from_metadata(
 			$this->build_config,
 			array(
@@ -158,7 +158,7 @@ abstract class Block {
 	 *
 	 * @see register_block_type()
 	 */
-	protected function register_from_data() {
+	protected function register_from_data(): void {
 		$block_args = array(
 			'editor_script' => $this->editor_handle,
 		);
@@ -175,22 +175,24 @@ abstract class Block {
 	/**
 	 * Register editor styles and scripts
 	 */
-	public function register_editor() {
+	public function register_editor(): void {
+		$version = (string) intval( filemtime( $this->editor_script_path ) );
 		wp_register_script(
 			$this->editor_handle,
 			$this->editor_script_src,
 			$this->editor_script_dependencies,
-			filemtime( $this->editor_script_path ),
+			$version,
 			true
 		);
 		wp_set_script_translations( $this->editor_handle, $this->lang_domain );
 
 		if ( false === empty( $this->editor_style_handle ) ) {
+			$version = (string) intval( filemtime( $this->editor_style_path ) );
 			wp_register_style(
 				$this->editor_handle,
 				$this->editor_style_src,
 				$this->editor_style_dependencies,
-				filemtime( $this->editor_style_path )
+				$version
 			);
 		}
 	}
@@ -198,13 +200,15 @@ abstract class Block {
 	/**
 	 * Register frontend styles and scripts
 	 */
-	public function register_frontend() {
+	public function register_frontend(): void {
+		$version = (string) intval( filemtime( $this->frontend_style_path ) );
+
 		if ( false === empty( $this->frontend_style_handle ) ) {
 			wp_register_style(
 				$this->frontend_style_handle,
 				$this->frontend_style_src,
 				$this->frontend_style_dependencies,
-				filemtime( $this->frontend_style_path )
+				$version
 			);
 		}
 	}

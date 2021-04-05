@@ -32,7 +32,7 @@ class Input {
 	 *
 	 * @return string
 	 */
-	public static function render( array $args, $options = array() ): string {
+	public static function render( array $args, $options = array() ): string { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 		$defaults = array(
 			'id'          => '',
 			'field_name'  => '',
@@ -64,6 +64,26 @@ class Input {
 		 * @var $editor
 		 * @var $atts
 		 */
+
+		if ( true === empty( $type ) ) {
+			return '<!-- Type it not defined. -->';
+		}
+		if ( true === empty( $field_name ) ) {
+			return '<!-- Field Name it not defined. -->';
+		}
+		if ( true === empty( $id ) ) {
+			return '<!-- ID it not defined. -->';
+		}
+
+		/**
+		 * PHPStan Fixes
+		 */
+		if ( false === isset( $field_value ) ) {
+			$field_value = '';
+		}
+		if ( false === isset( $title ) ) {
+			$title = '';
+		}
 
 		if (
 			true === in_array(
@@ -152,6 +172,7 @@ class Input {
 	 * @return string
 	 */
 	protected static function render_textarea( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+		$value = self::cast_to_string( $value );
 		if ( true === $editor['visual'] ) {
 			ob_start();
 			wp_editor( $value, $id, $editor );
@@ -159,6 +180,9 @@ class Input {
 		} else {
 			$input = '<textarea name="' . $field_name . '" id="' . $id . '" ' . $attributes . '>' . $value . '</textarea>';
 		}
+
+		// cast to string explicitly in case wp_editor returns false.
+		$input = (string) $input;
 
 		return $input;
 	}
@@ -183,9 +207,12 @@ class Input {
 
 		$input .= '<option value="0">&ndash; ' . __( 'Select', 'rfd-wp-core' ) . ' &ndash;</option>';
 		foreach ( $options as $key => $option ) {
-			if ( $multiple ) {
+			if ( true === $multiple ) {
+				// cast possible string to array.
+				$value    = self::cast_to_array( $value );
 				$selected = ( in_array( $key, $value, true ) ? 'selected="selected"' : '' );
 			} else {
+				$value    = self::cast_to_string( $value );
 				$selected = ( $value === $key ? 'selected="selected"' : '' );
 			}
 			$input .= '<option ' . $selected . ' value="' . $key . '">' . $option . '</option>';
@@ -216,8 +243,10 @@ class Input {
 		$input .= '<option value="0">&ndash; ' . __( 'Select', 'rfd-wp-core' ) . ' &ndash;</option>';
 		foreach ( get_categories( array( 'hide_empty' => false ) ) as $cat ) {
 			if ( $multiple ) {
+				$value    = self::cast_to_array( $value );
 				$selected = ( true === in_array( $cat->cat_ID, $value, true ) ? 'selected="selected"' : '' );
 			} else {
+				$value    = self::cast_to_string( $value );
 				$selected = ( $value === $cat->cat_ID ? 'selected="selected"' : '' );
 			}
 			$input .= '<option ' . $selected . ' value="' . $cat->cat_ID . '">' . $cat->cat_name . '</option>';
@@ -289,6 +318,7 @@ class Input {
 	 * @return string
 	 */
 	protected static function render_image( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+		$value = self::cast_to_string( $value );
 		$input = '<input id="' . $id . '" type="text" size="36" name="' . $field_name . '" placeholder="http://..." value="' . $value . '" />';
 
 		$input .= '<input class="button image-upload" data-field="#' . $id . '" type="button" value="' . __( 'Upload Image', 'rfd-wp-core' ) . '" />';
@@ -344,9 +374,7 @@ class Input {
 	 * @return string
 	 */
 	protected static function render_checkbox_group( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
-		if ( false === is_array( $value ) ) {
-			$value = array( $value );
-		}
+		$value = self::cast_to_array( $value );
 		$input = '<fieldset class="checkbox-label aus-label">';
 		foreach ( $options as $option_value => $option_label ) {
 			$unique_id = sanitize_title_with_dashes( $id . '-' . $option_value );
@@ -379,6 +407,8 @@ class Input {
 	 * @return string
 	 */
 	protected static function render_date( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+		$value = self::cast_to_string( $value );
+
 		return '<input name="' . $field_name . '" id="' . $id . '" type="' . $type . '" value="' . $value . '"' . $attributes . ' />';
 	}
 
@@ -398,6 +428,8 @@ class Input {
 	 * @return string
 	 */
 	protected static function render_text( string $id, string $field_name, $value, string $type, string $title, array $options, array $editor, string $attributes, bool $multiple ): string {
+		$value = self::cast_to_string( $value );
+
 		return '<input name="' . $field_name . '" id="' . $id . '" type="' . $type . '" value="' . $value . '"' . $attributes . ' />';
 	}
 
@@ -427,7 +459,7 @@ class Input {
 	 *
 	 * @return array|false|mixed
 	 */
-	private static function get_image_sizes( $size = '' ) {
+	private static function get_image_sizes( $size = '' ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 		global $_wp_additional_image_sizes;
 		$sizes = array();
 
@@ -456,5 +488,35 @@ class Input {
 		}
 
 		return $sizes;
+	}
+
+	/**
+	 * Cast possible string to array.
+	 *
+	 * @param string|array $val Value.
+	 *
+	 * @return array
+	 */
+	private static function cast_to_array( $val ): array {
+		if ( false === is_array( $val ) ) {
+			$val = array( $val );
+		}
+
+		return $val;
+	}
+
+	/**
+	 * Cast possible array to string by using first element only.
+	 *
+	 * @param string|array $val Value.
+	 *
+	 * @return string
+	 */
+	private static function cast_to_string( $val ): string {
+		if ( true === is_array( $val ) ) {
+			$val = current( $val );
+		}
+
+		return $val;
 	}
 }

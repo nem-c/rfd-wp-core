@@ -20,7 +20,7 @@ class Loader {
 	 *
 	 * @since    0.9.0
 	 * @access   protected
-	 * @var      array $actions The actions registered with Word	Press to fire when the plugin loads.
+	 * @var      array $actions The actions registered with WordPress to fire when the plugin loads.
 	 */
 	protected $actions = array();
 	/**
@@ -104,28 +104,50 @@ class Loader {
 	 *
 	 * @since    0.9.0
 	 */
-	public function run() {
+	public function run(): void {
+		$this->run_filters();
+		$this->run_actions();
+	}
+
+	/**
+	 * Run filters.
+	 *
+	 * @since 2.2.1
+	 */
+	protected function run_filters(): void {
 		foreach ( $this->filters as $hook ) {
-			add_filter(
-				$hook['hook'],
-				array(
-					$hook['component'],
-					$hook['callback'],
-				),
-				$hook['priority'],
-				$hook['accepted_args']
-			);
+			$method   = array( $hook['component'], $hook['callback'] );
+			$callable = is_callable( $method, true, $function_to_add );
+
+			if ( true === $callable ) {
+				add_filter(
+					$hook['hook'],
+					$function_to_add,
+					$hook['priority'],
+					$hook['accepted_args']
+				);
+			}
 		}
+	}
+
+	/**
+	 * Run actions.
+	 *
+	 * @since 2.2.1
+	 */
+	protected function run_actions(): void {
 		foreach ( $this->actions as $hook ) {
-			add_action(
-				$hook['hook'],
-				array(
-					$hook['component'],
-					$hook['callback'],
-				),
-				$hook['priority'],
-				$hook['accepted_args']
-			);
+			$method   = array( $hook['component'], $hook['callback'] );
+			$callable = is_callable( $method, true, $function_to_add );
+
+			if ( true === $callable ) {
+				add_action(
+					$hook['hook'],
+					$function_to_add,
+					$hook['priority'],
+					$hook['accepted_args']
+				);
+			}
 		}
 	}
 }

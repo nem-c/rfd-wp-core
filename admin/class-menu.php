@@ -38,15 +38,15 @@ class Menu {
 	 *
 	 * @param Loader $loader Loader object.
 	 */
-	final public static function init( Loader $loader ) {
-		$menu = new static();
+	final public static function init( Loader $loader ): void {
+		$menu = new static(); // @phpstan-ignore-line
 		$loader->add_action( 'admin_menu', $menu, 'register' );
 	}
 
 	/**
 	 * Register menus.
 	 */
-	public function register() {
+	public function register(): void {
 		$this->preload_settings();
 		$this->register_menus();
 		$this->register_submenus();
@@ -55,7 +55,7 @@ class Menu {
 	/**
 	 * Register top admin menu pages.
 	 */
-	protected function register_menus() {
+	protected function register_menus(): void {
 		foreach ( $this->menus_pages as $menu_page ) {
 
 			$page_title    = $menu_page['page_title'];
@@ -66,24 +66,26 @@ class Menu {
 			$icon_url      = $menu_page['icon_url'];
 			$position      = $menu_page['position'];
 
-			add_menu_page(
-				$page_title,
-				$menu_title,
-				$compatibility,
-				$menu_slug,
-				$callback,
-				$icon_url,
-				$position
-			);
+			if ( true === is_callable( $callback, true ) ) {
+				add_menu_page(
+					$page_title,
+					$menu_title,
+					$compatibility,
+					$menu_slug,
+					$callback,
+					$icon_url,
+					$position
+				);
 
-			remove_submenu_page( $menu_slug, $menu_slug );
+				remove_submenu_page( $menu_slug, $menu_slug );
+			}
 		}
 	}
 
 	/**
 	 * Register submenu items
 	 */
-	protected function register_submenus() {
+	protected function register_submenus(): void {
 		foreach ( $this->submenus_pages as $submenu_page ) {
 
 			$parent_slug = $submenu_page['parent_slug'];
@@ -94,15 +96,17 @@ class Menu {
 			$callback    = $this->fetch_callback( $submenu_page );
 			$position    = $submenu_page['position'] ?? null;
 
-			add_submenu_page(
-				$parent_slug,
-				$page_title,
-				$menu_title,
-				$capability,
-				$menu_slug,
-				$callback,
-				$position
-			);
+			if ( true === is_callable( $callback, true ) ) {
+				add_submenu_page(
+					$parent_slug,
+					$page_title,
+					$menu_title,
+					$capability,
+					$menu_slug,
+					$callback,
+					$position
+				);
+			}
 		}
 	}
 
@@ -126,7 +130,7 @@ class Menu {
 	/**
 	 * Preload settings
 	 */
-	public function preload_settings() {
+	public function preload_settings(): void {
 		$config = $this->load_settings_file();
 
 		$this->preload_menu_pages( $config );
@@ -137,7 +141,7 @@ class Menu {
 	 *
 	 * @param array $config Config array.
 	 */
-	private function preload_menu_pages( array $config ) {
+	private function preload_menu_pages( array $config ): void {
 		foreach ( $config as $menu_id => $menu_config ) {
 
 			$menu_slug = $this->store_menu_page( $menu_id, $menu_config );
@@ -186,7 +190,7 @@ class Menu {
 	 * @param string $menu_slug Parent menu slug.
 	 * @param array $config Submenus config.
 	 */
-	protected function preload_submenu_pages( string $menu_slug, array $config ) {
+	protected function preload_submenu_pages( string $menu_slug, array $config ): void {
 		foreach ( $config as $submenu_id => $submenu_config ) {
 
 			$submenu_page_title = $submenu_config['page_title'] ?? '';

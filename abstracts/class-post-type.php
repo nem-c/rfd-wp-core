@@ -207,8 +207,8 @@ abstract class Post_Type {
 	 *
 	 * @param Loader $loader Loader object.
 	 */
-	final public static function init( Loader $loader ) {
-		$post_type = new static();
+	final public static function init( Loader $loader ): void {
+		$post_type = new static(); // @phpstan-ignore-line
 
 		$loader->add_action( 'init', $post_type, 'register' );
 		$loader->add_action( 'admin_menu', $post_type, 'remove_menu_item' );
@@ -217,14 +217,14 @@ abstract class Post_Type {
 	/**
 	 * Register post type
 	 */
-	public function register() {
+	public function register(): void {
 		register_post_type( $this->name, $this->get_args() );
 	}
 
 	/**
 	 * Remove top menu item
 	 */
-	public function remove_menu_item() {
+	public function remove_menu_item(): void {
 		if ( true === $this->remove_menu_item ) {
 			remove_menu_page( 'edit.php?post_type=' . $this->name );
 		}

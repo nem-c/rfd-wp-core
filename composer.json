@@ -16,6 +16,7 @@
   "require-dev": {
     "phpcompatibility/php-compatibility": "master",
     "wp-coding-standards/wpcs": "master",
-    "dealerdirect/phpcodesniffer-composer-installer": "master"
+    "dealerdirect/phpcodesniffer-composer-installer": "master",
+    "szepeviktor/phpstan-wordpress": "master"
   }
 }

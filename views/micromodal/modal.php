@@ -1,6 +1,6 @@
 <?php
 /**
- * Constants file
+ * Model view file
  *
  * @link       https://rfd.rs/
  * @since      0.9.0

@@ -3,8 +3,8 @@
  * Automatically locates and loads files based on their namespaces and their
  * file names whenever they are instantiated.
  *
- * @package RFD\ExportYITHMultiShippingOrders
- * @subpackage RFD\ExportYITHMultiShippingOrders\Autoloader
+ * @package RFD\Core
+ * @subpackage RFD\Core\Autoloader
  */
 
 if ( ! defined( 'WPINC' ) ) {
@@ -18,7 +18,7 @@ spl_autoload_register(
 		// First, separate the components of the incoming file.
 		$file_path = explode( '\\', $filename );
 
-		if ( count( $file_path ) < 3 ) {
+		if ( true === empty( $file_path ) || count( $file_path ) < 3 ) {
 			return;
 		}
 		if ( 'RFD' !== $file_path[0] ) {
@@ -69,11 +69,11 @@ spl_autoload_register(
 			$fully_qualified_path = $fully_qualified_path . trailingslashit( $dir );
 		}
 
-		if ( 'RFD' === $file_path[0] && 'Blocks' === $file_path[1] ) {
+		if ( 'RFD' === $file_path[0] && 'Blocks' === $file_path[1] && false === empty( $file_path[2] ) ) {
 			$block_dir_name = $file_path[2];
 			$block_dir_name = strtolower( $block_dir_name );
 			$block_dir_name = preg_replace( '/[^0-9A-Za-z.-]/', '-', $block_dir_name );
-			$block_dir_name = preg_replace( '/-{2,}/', '-', $block_dir_name );
+			$block_dir_name = preg_replace( '/-{2,}/', '-', $block_dir_name ); // @phpstan-ignore-line $block_dir_name will not be null.
 
 			$fully_qualified_path .= $block_dir_name . DIRECTORY_SEPARATOR;
 		}

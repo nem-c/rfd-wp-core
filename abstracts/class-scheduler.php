@@ -55,7 +55,7 @@ abstract class Scheduler {
 	 * Scheduler.
 	 * Registers given schedule to be executed every n times.
 	 */
-	public function schedule() {
+	public function schedule(): void {
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
 		if ( false === wp_next_scheduled( $this->schedule_name ) ) {
 			wp_schedule_event( time(), $this->recurrence, $this->schedule_name );
@@ -65,7 +65,7 @@ abstract class Scheduler {
 	/**
 	 * Run when deactivated.
 	 */
-	public function deactivate() {
+	public function deactivate(): void {
 		wp_clear_scheduled_hook( $this->schedule_name );
 	}
 

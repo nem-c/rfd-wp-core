@@ -101,15 +101,15 @@ abstract class Taxonomy {
 	 *
 	 * @param Loader $loader Loader object.
 	 */
-	final public static function init( Loader $loader ) {
-		$taxonomy = new static();
+	final public static function init( Loader $loader ): void {
+		$taxonomy = new static(); // @phpstan-ignore-line
 		$loader->add_action( 'init', $taxonomy, 'register' );
 	}
 
 	/**
 	 * Register taxonomy.
 	 */
-	public function register() {
+	public function register(): void {
 		register_taxonomy( $this->name, $this->objects, $this->get_args() );
 	}
 

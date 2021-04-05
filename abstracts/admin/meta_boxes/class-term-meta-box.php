@@ -83,8 +83,8 @@ abstract class Term_Meta_Box {
 	 * @param Loader $loader Loader object.
 	 * @param int $priority Default priority for edit_comment hook.
 	 */
-	final public static function init( Loader $loader, $priority = 10 ) {
-		$term_meta_box = new static();
+	final public static function init( Loader $loader, $priority = 10 ): void {
+		$term_meta_box = new static(); // @phpstan-ignore-line.
 
 		$loader->add_action( 'load-edit-tags.php', $term_meta_box, 'add_meta_boxes', 25 );
 		$loader->add_action( $term_meta_box->taxonomy . '_edit_form', $term_meta_box, 'do_meta_boxes', 25 );
@@ -97,7 +97,7 @@ abstract class Term_Meta_Box {
 	/**
 	 * Adds metabox on user page as it is not supported by default
 	 */
-	public function add_meta_boxes() {
+	public function add_meta_boxes(): void {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$tag_id = intval( sanitize_text_field( wp_unslash( $_GET['tag_ID'] ?? 0 ) ) );
 		$tag    = null;
@@ -128,7 +128,7 @@ abstract class Term_Meta_Box {
 	 * @param mixed $tag Tag object.
 	 */
 	public function do_meta_boxes( $tag ): void {
-		echo '<style>#poststuff {min-width: auto; overflow: auto;} #' . $this->id . ' .handle-actions {display: none;} #' . $this->id . ' .postbox-header .hndle {cursor: default;} </style>';
+		echo '<style>#poststuff {min-width: auto; overflow: auto;} #' . $this->id . ' .handle-actions {display: none;} #' . $this->id . ' .postbox-header .hndle {cursor: default;} </style>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '<div id="poststuff"><div id="postbox-container-2" class="postbox-container">';
 		do_meta_boxes( 'term', 'normal', $tag );
 		echo '</div></div>';
@@ -137,7 +137,7 @@ abstract class Term_Meta_Box {
 	/**
 	 * Register meta box
 	 */
-	public function register() {
+	public function register(): void {
 		$title = __( $this->title, $this->lang_domain ); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText, WordPress.WP.I18n.NonSingularStringLiteralDomain
 
 		add_meta_box(
@@ -187,12 +187,12 @@ abstract class Term_Meta_Box {
 			/* translators: name of missing nonce name */
 			$error_text = _x( 'Nonce validation not set for %s', 'name of missing nonce name', $this->lang_domain ); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain
 			$error      = new WP_Error( 'rfd-error', sprintf( $error_text, $this->id ) );
-			Logger::log( $error, true );
+			Logger::log( $error, true ); // @phpstan-ignore-line.
 		}
 
 		$verified = $this->verify( $term_id, sanitize_text_field( wp_unslash( $_POST[ $this->nonce_name ] ?? '' ) ) ); //phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( is_wp_error( $verified ) ) {
-			Logger::log( $verified, true );
+			Logger::log( $verified, true ); // @phpstan-ignore-line.
 		}
 
 		return $this->save( $term_id, $tt_id, $taxonomy, $update );

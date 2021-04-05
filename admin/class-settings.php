@@ -46,15 +46,15 @@ class Settings {
 	 *
 	 * @param Loader $loader Loader object.
 	 */
-	final public static function init( Loader $loader ) {
-		$menu = new static();
+	final public static function init( Loader $loader ): void {
+		$menu = new static(); // @phpstan-ignore-line
 		$loader->add_action( 'admin_menu', $menu, 'register' );
 	}
 
 	/**
 	 * Register
 	 */
-	public function register() {
+	public function register(): void {
 		$this->preload_settings();
 		$this->register_menu();
 		$this->register_sections();
@@ -64,7 +64,7 @@ class Settings {
 	/**
 	 * Register menu
 	 */
-	public function register_menu() {
+	public function register_menu(): void {
 		foreach ( $this->pages as $page ) {
 			register_setting( $page['id'], $page['id'] );
 			add_options_page(
@@ -80,7 +80,7 @@ class Settings {
 	/**
 	 * Register sections
 	 */
-	public function register_sections() {
+	public function register_sections(): void {
 		foreach ( $this->sections as $section ) {
 			add_settings_section(
 				$section['id'],
@@ -94,7 +94,7 @@ class Settings {
 	/**
 	 * Register fields
 	 */
-	public function register_fields() {
+	public function register_fields(): void {
 		foreach ( $this->fields as $field ) {
 			add_settings_field(
 				$field['id'],
@@ -110,7 +110,7 @@ class Settings {
 	/**
 	 * Preload settings
 	 */
-	private function preload_settings() {
+	private function preload_settings(): void { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh,Generic.Metrics.NestingLevel.MaxExceeded
 		$config = $this->load_settings_file();
 
 		foreach ( $config as $page_block ) {
@@ -181,8 +181,10 @@ class Settings {
 
 	/**
 	 * Load settings file
+	 *
+	 * @return array
 	 */
-	private function load_settings_file() {
+	private function load_settings_file(): array {
 		$config_file_path = RFD_CORE_CONFIG_PATH . 'admin/settings.php';
 		$config           = array();
 		if ( true === file_exists( $config_file_path ) ) {
